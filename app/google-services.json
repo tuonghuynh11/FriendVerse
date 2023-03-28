@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "636293367764",
+    "project_id": "friendverse-af601",
+    "storage_bucket": "friendverse-af601.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636293367764:android:fbe3c4ae0226dae3c43841",
+        "android_client_info": {
+          "package_name": "com.example.friendverse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "636293367764-1f70sda88roeofqoa8e63dmbrmeg7u02.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.friendverse",
+            "certificate_hash": "07e8b2b9ed92b23881cd80a1e2bbcc50849f663c"
+          }
+        },
+        {
+          "client_id": "636293367764-pi06locag46nij47buacde43dlk4570l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyKwCVY2v381NfQjnF7fOGm9LESJ5ScoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "636293367764-pi06locag46nij47buacde43dlk4570l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
