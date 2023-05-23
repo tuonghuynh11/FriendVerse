@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,14 +18,61 @@
         android:theme="@style/Theme.FriendVerse"
         tools:targetApi="31">
         <activity
+            android:name=".TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.SignupPhoneActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.NewPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.ForgetPassEmailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.ForgetPassPhoneActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.ForgetPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.SignupFinishActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.ChangeUsernameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.SignupInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.EmailConfirmActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.PhoneConfirmActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.SignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login.StartUpActivity"
+            android:exported="false">
+
+        </activity>
+        <activity
+            android:name=".Login.LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Login.StartActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
