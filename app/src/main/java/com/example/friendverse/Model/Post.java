@@ -1,20 +1,30 @@
 package com.example.friendverse.Model;
-public class Post {
 
+import java.util.Date;
+import java.util.List;
+
+public class Post {
+    private String description;
     private String postid;
     private String postimage;
-    private String description;
     private String publisher;
 
-    public Post(String postid, String postimage, String description, String publisher) {
+    public Post() {
+    }
+
+    public Post(String description, String postid, String postimage, String publisher) {
+        this.description = description;
         this.postid = postid;
         this.postimage = postimage;
-        this.description = description;
         this.publisher = publisher;
     }
 
-    public Post() {
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPostid() {
@@ -25,20 +35,12 @@ public class Post {
         this.postid = postid;
     }
 
-    public String getPostImage() {
+    public String getPostimage() {
         return postimage;
     }
 
-    public void setPostImage(String postImage) {
-        this.postimage = postImage;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPostimage(String postimage) {
+        this.postimage = postimage;
     }
 
     public String getPublisher() {

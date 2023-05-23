@@ -128,6 +128,14 @@
 <!--            </intent-filter>-->
         </activity>
         <activity
+            android:name=".Profile.SettingActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".Profile.FollowActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
 
