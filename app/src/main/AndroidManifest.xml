@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -136,6 +142,18 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".CommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddStoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddPost"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
 
@@ -144,6 +162,10 @@
              <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
         </activity>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+    </application>
 
         <activity
             android:name=".Login.StartActivity"
