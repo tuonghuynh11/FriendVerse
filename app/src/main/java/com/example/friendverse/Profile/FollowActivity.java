@@ -42,7 +42,6 @@ public class FollowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow);
-        Objects.requireNonNull(getSupportActionBar()).hide();
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
 

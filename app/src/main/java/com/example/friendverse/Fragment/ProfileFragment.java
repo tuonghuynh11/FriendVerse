@@ -19,6 +19,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -121,7 +123,11 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 String button = edit_profile.getText().toString();
                 if (button.equals("Edit Profile")) {
-//                    startActivity(new Intent(getContext(), EditProfileActivity.class));
+                    Fragment editFragment = new EditProfileFragment();
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fragment_container, editFragment);
+                    fragmentTransaction.commit();
                 }
                 else if (button.equals("Follow")) {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following").child(profileid).setValue(true);
