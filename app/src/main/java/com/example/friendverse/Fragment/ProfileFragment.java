@@ -28,6 +28,7 @@ import com.example.friendverse.Adapter.MyPhotoAdapter;
 import com.example.friendverse.Profile.FollowActivity;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
+import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
@@ -145,8 +146,16 @@ public class ProfileFragment extends Fragment {
                         R.layout.layout_bottom_sheet,
                                 (LinearLayout)root.findViewById(R.id.bottomSheetContainer)
                         );
+                bottomSheetView.findViewById(R.id.setting).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), SettingActivity.class);
+                        startActivity(intent);
+                    }
+                });
                 bottomSheetDialog.setContentView(bottomSheetView);
                 bottomSheetDialog.show();
+
             }
         });
 
