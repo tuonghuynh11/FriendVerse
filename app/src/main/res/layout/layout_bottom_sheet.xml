@@ -38,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
+            android:id="@+id/setting"
             android:text="Setting"
             android:textColor="@color/black"
             android:textStyle="bold"
@@ -63,6 +64,7 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:text="Your Activity"
+            android:id="@+id/youractivity"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="24dp"/>
@@ -87,6 +89,7 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:text="QR code"
+            android:id="@+id/qrcode"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="24dp"/>
@@ -111,6 +114,7 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:text="Saved"
+            android:id="@+id/saved"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="24dp"/>
@@ -135,6 +139,7 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:text="Favorites"
+            android:id="@+id/favorites"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="24dp"/>

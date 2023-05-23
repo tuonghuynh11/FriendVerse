@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.friendverse.Login.StartActivity;
 import com.example.friendverse.MainActivity;
 import com.example.friendverse.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,7 +23,6 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        Objects.requireNonNull(getSupportActionBar()).hide();
 
         close = findViewById(R.id.close);
         close.setOnClickListener(new View.OnClickListener() {
@@ -38,7 +38,7 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(SettingActivity.this, MainActivity.class)
+                startActivity(new Intent(SettingActivity.this, StartActivity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });

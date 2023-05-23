@@ -28,14 +28,13 @@
     <style name="PBarTheme" >
 
         <item name="colorSecondary">#61a5e3</item>
-
-
+    </style>
     <style name="Theme.ChatApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="android:statusBarColor" tools:targetApi="1">@color/primary</item>
         <!-- Customize your theme here. -->
-
+    </style>
     <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
     </style>

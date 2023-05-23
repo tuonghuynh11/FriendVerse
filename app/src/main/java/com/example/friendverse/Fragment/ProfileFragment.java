@@ -19,6 +19,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +30,7 @@ import com.example.friendverse.Adapter.MyPhotoAdapter;
 import com.example.friendverse.Profile.FollowActivity;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
+import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,7 +123,11 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 String button = edit_profile.getText().toString();
                 if (button.equals("Edit Profile")) {
-//                    startActivity(new Intent(getContext(), EditProfileActivity.class));
+                    Fragment editFragment = new EditProfileFragment();
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fragment_container, editFragment);
+                    fragmentTransaction.commit();
                 }
                 else if (button.equals("Follow")) {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following").child(profileid).setValue(true);
@@ -145,8 +152,16 @@ public class ProfileFragment extends Fragment {
                         R.layout.layout_bottom_sheet,
                                 (LinearLayout)root.findViewById(R.id.bottomSheetContainer)
                         );
+                bottomSheetView.findViewById(R.id.setting).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), SettingActivity.class);
+                        startActivity(intent);
+                    }
+                });
                 bottomSheetDialog.setContentView(bottomSheetView);
                 bottomSheetDialog.show();
+
             }
         });
 
