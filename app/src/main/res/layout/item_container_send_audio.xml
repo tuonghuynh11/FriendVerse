@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <me.jagar.chatvoiceplayerlibrary.VoicePlayerView
+            android:id="@+id/voicePlayerView"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="wrap_content"
+            app:enableVisualizer="true"
+            app:playPauseBackgroundColor="@color/colorAccent"
+            app:playPauseCornerRadius="100"
+            app:playProgressbarColor="@color/colorAccent"
+            app:progressTimeColor="@color/white"
+            app:seekBarProgressColor="#000"
+            app:seekBarThumbColor="@color/colorAccent"
+            app:shareCornerRadius="100"
+            app:showShareButton="false"
+            app:showTiming="true"
+            app:viewBackground="@color/colorPrimary"
+            app:viewCornerRadius="100"
+            app:visualizationNotPlayedColor="@color/colorAccent"
+            app:visualizationPlayedColor="@color/colorAccent"
+            android:paddingStart="@dimen/_12sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/textDateTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondary_text"
+            android:textSize="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/voicePlayerView"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

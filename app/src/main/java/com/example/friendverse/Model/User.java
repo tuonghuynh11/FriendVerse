@@ -13,16 +13,20 @@ public class User implements Serializable {
     public static final String TOKENCALLKEY="tokenCall";
     public static final String TOKENKEY="token";
     public static final String ACTIVITYKEY="activity";
+
     public static final String WEBSITEKEY = "website";
     public static final String PHONEKEY = "phonenumber";
+
     private String id;
     private String username;
     private String email;
     private String fullname;
     private String imageurl;
     private String bio;
+
     private String website;
     private String phonenumber;
+
     private String tokenCall;
     private String token;
 
@@ -39,7 +43,9 @@ public class User implements Serializable {
     public User() {
     }
 
+
     public User(String id, String username, String fullname, String imageurl, String bio,String email, int activity, String tokenCall,String token, String website, String phonenumber) {
+
         this.id = id;
         this.username = username;
         this.fullname = fullname;
@@ -49,8 +55,10 @@ public class User implements Serializable {
         this.activity=activity;
         this.tokenCall=tokenCall;
         this.token=token;
+
         this.website = website;
         this.phonenumber = phonenumber;
+
     }
 
     public String getTokenCall() {
@@ -107,6 +115,7 @@ public class User implements Serializable {
     public void setBio(String bio) {
         this.bio = bio;
     }
+
     public String getWebsite() {return website;}
 
     public void setWebsite(String website) {
@@ -120,4 +129,5 @@ public class User implements Serializable {
     public void setPhonenumber(String phonenumber) {
         this.phonenumber = phonenumber;
     }
+
 }
