@@ -83,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ProfileFragment()).commit();
         }
-//        else {
+        else {
 //            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
 //                    new HomeFragment()).commit();
-//        }
+        }
     }
 
     private BottomNavigationView.OnItemSelectedListener navigationItemSelectedListener = item -> {

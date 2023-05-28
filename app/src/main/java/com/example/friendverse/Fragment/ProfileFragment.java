@@ -43,11 +43,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
-    ImageView options;
+    ImageView options, close, add;
     CircleImageView image_profile;
     TextView posts, followers, following, fullname, bio, username;
     Button edit_profile, share_profile;
@@ -69,7 +70,11 @@ public class ProfileFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        profileid = getArguments().getString("profileid");
+        Bundle bundle = this.getArguments();
+        if (bundle == null) {
+            return null;
+        }
+        profileid = bundle.getString("profileid");
 
         image_profile = root.findViewById(R.id.image_profile);
         options = root.findViewById(R.id.options);
@@ -83,6 +88,7 @@ public class ProfileFragment extends Fragment {
         share_profile = root.findViewById(R.id.share_profile);
         my_photos = root.findViewById(R.id.my_photos);
         saved_photos = root.findViewById(R.id.save_photos);
+        close = root.findViewById(R.id.close);
         // posts
         recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -111,6 +117,7 @@ public class ProfileFragment extends Fragment {
         if (profileid.equals(firebaseUser.getUid())) {
             edit_profile.setText("Edit Profile");
             share_profile.setText("Share Profile");
+            close.setVisibility(View.GONE);
         }
         else {
             share_profile.setText("Message");
@@ -126,7 +133,7 @@ public class ProfileFragment extends Fragment {
                     Fragment editFragment = new EditProfileFragment();
                     FragmentManager fragmentManager = getParentFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, editFragment);
+                    fragmentTransaction.replace(R.id.fragment_container, editFragment).addToBackStack(null);
                     fragmentTransaction.commit();
                 }
                 else if (button.equals("Follow")) {
@@ -134,9 +141,16 @@ public class ProfileFragment extends Fragment {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid).child("followers").child(firebaseUser.getUid()).setValue(true);
                 }
                 else if (button.equals("Following")) {
-                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following").child(profileid).setValue(true);
-                    FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid).child("followers").child(firebaseUser.getUid()).setValue(true);
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following").child(profileid).removeValue();
+                    FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid).child("followers").child(firebaseUser.getUid()).removeValue();
                 }
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.popBackStack();
             }
         });
 
@@ -168,6 +182,7 @@ public class ProfileFragment extends Fragment {
         my_photos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                saved_photos.setImageResource(R.drawable.ic_save);
                 recyclerView.setVisibility(View.VISIBLE);
                 recyclerView_savedPosts.setVisibility(View.GONE);
             }
@@ -176,6 +191,7 @@ public class ProfileFragment extends Fragment {
         saved_photos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                saved_photos.setImageResource(R.drawable.ic_save);
                 recyclerView.setVisibility(View.GONE);
                 recyclerView_savedPosts.setVisibility(View.VISIBLE);
             }
@@ -184,25 +200,47 @@ public class ProfileFragment extends Fragment {
         followers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), FollowActivity.class);
-                intent.putExtra("id", profileid);
-                intent.putExtra("title", "Followers");
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", profileid);
+                bundle.putString("title", "Followers");
+
+                Fragment fragment = new FollowFragment();
+                fragment.setArguments(bundle);
+                FragmentManager fragmentManager = getParentFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
             }
         });
 
         following.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), FollowActivity.class);
-                intent.putExtra("id", profileid);
-                intent.putExtra("title", "Following");
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", profileid);
+                bundle.putString("title", "Following");
+
+                Fragment fragment = new FollowFragment();
+                fragment.setArguments(bundle);
+                FragmentManager fragmentManager = getParentFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
             }
         });
 
         return root;
     }
+    private void addNotification(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userid", firebaseUser.getUid());
+        hashMap.put("text", "started following you");
+        hashMap.put("postid", "");
+        hashMap.put("ispost", false);
+
+        reference.push().setValue(hashMap);
+    }
+
     private void userInfo() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
         reference.addValueEventListener(new ValueEventListener() {
@@ -256,12 +294,12 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("TAG", error.getMessage());
             }
         });
     }
     private void getFollowers() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("follower");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid).child("followers");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -270,11 +308,11 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("TAG", error.getMessage());
             }
         });
 
-        DatabaseReference newReference = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following");
+        DatabaseReference newReference = FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid).child("following");
         newReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -283,7 +321,7 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("TAG", error.getMessage());
             }
         });
     }
@@ -310,14 +348,14 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("TAG", error.getMessage());
             }
         });
     }
 
     private void mySaved() {
         mySaved = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saved").child(firebaseUser.getUid());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Saves").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -328,8 +366,8 @@ public class ProfileFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onCancelled(DatabaseError error) {
+                Log.d("TAG", error.getMessage());
             }
         });
     }
@@ -341,8 +379,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(DataSnapshot snapshot) {
                 postList_savedPosts.clear();
                 for (DataSnapshot item : snapshot.getChildren()){
-                    Post post = snapshot.getValue(Post.class);
-
+                    Post post = item.getValue(Post.class);
                     for (String id : mySaved) {
                         if (post.getPostid().equals(id)) {
                             postList_savedPosts.add(post);
@@ -353,8 +390,8 @@ public class ProfileFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onCancelled(DatabaseError error) {
+                Log.d("TAG", error.getMessage());
             }
         });
     }

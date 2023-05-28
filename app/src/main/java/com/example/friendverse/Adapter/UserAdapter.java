@@ -17,8 +17,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -101,15 +104,14 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.ViewHolder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isFragment) {
-                    sContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", user.getId()).apply();
-
-                    ((FragmentActivity)sContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
-                } else {
-                    Intent intent = new Intent(sContext, MainActivity.class);
-                    intent.putExtra("publisherId", user.getId());
-                    sContext.startActivity(intent);
-                }
+                Bundle passData = new Bundle();
+                passData.putString("profileid", user.getId());
+                Fragment editFragment = new ProfileFragment();
+                editFragment.setArguments(passData);
+                FragmentManager fragmentManager = ((AppCompatActivity)sContext).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, editFragment).addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 
