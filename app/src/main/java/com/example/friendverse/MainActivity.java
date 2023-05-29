@@ -49,10 +49,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser == null) {
-            startActivity(new Intent(MainActivity.this, StartActivity.class));
-        }
+
+
         setContentView(layout.activity_main);
 //        // auth
 //        auth = FirebaseAuth.getInstance();
@@ -83,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ProfileFragment()).commit();
         }
+
+
 //        else {
 //            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
 //                    new HomeFragment()).commit();
@@ -115,4 +115,16 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(MainActivity.this, StartActivity.class));
+            finishAffinity();
+            return;
+        }
+    }
 }

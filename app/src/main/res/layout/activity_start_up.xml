@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login.StartUpActivity">
+    tools:context=".Login.StartUpActivity"
+    android:background="@drawable/gradient_background">
     <ImageView
         android:id="@+id/ImgLogo"
         android:layout_width="180dp"
@@ -23,7 +24,7 @@
         android:layout_marginRight="50dp"
         android:text="Welcome to FriendVerse"
         android:textAlignment="center"
-        android:textColor="#61a5e3"
+        android:textColor="@color/white"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
