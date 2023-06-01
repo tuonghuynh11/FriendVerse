@@ -64,17 +64,17 @@ public class ProfileFragment extends Fragment {
 
     ImageButton my_photos, saved_photos;
     View root;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        Bundle bundle = this.getArguments();
-        if (bundle == null) {
-            return null;
-        }
-        profileid = bundle.getString("profileid");
+
+
+        profileid = getArguments().getString("profileid");
+
 
         image_profile = root.findViewById(R.id.image_profile);
         options = root.findViewById(R.id.options);
@@ -139,6 +139,7 @@ public class ProfileFragment extends Fragment {
                 else if (button.equals("Follow")) {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following").child(profileid).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid).child("followers").child(firebaseUser.getUid()).setValue(true);
+                    addNotifications();
                 }
                 else if (button.equals("Following")) {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("following").child(profileid).removeValue();
@@ -394,5 +395,16 @@ public class ProfileFragment extends Fragment {
                 Log.d("TAG", error.getMessage());
             }
         });
+    }
+    private void addNotifications() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+
+        HashMap<String , Object> hashMap = new HashMap<>();
+        hashMap.put("userid" , firebaseUser.getUid());
+        hashMap.put("text" , "started following you");
+        hashMap.put("postid" , "");
+        hashMap.put("ispost" , false);
+
+        reference.push().setValue(hashMap);
     }
 }

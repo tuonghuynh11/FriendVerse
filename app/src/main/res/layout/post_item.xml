@@ -53,23 +53,36 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/mediaContainer"
+            app:layout_constraintTop_toTopOf="@+id/mediaContainer">
 
             <ImageView
                 android:id="@+id/post_image"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/img_1"
+                android:visibility="gone"
                 app:layout_constraintDimensionRatio="1:1"
                 tools:ignore="MissingConstraints" />
+
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:padding="5dp"
+                android:visibility="gone"
+                app:layout_constraintDimensionRatio="1:1"
+                tools:ignore="MissingConstraints"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <RelativeLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:padding="8dp"
+            android:layout_below="@id/mediaContainer">
 
             <ImageView
                 android:id="@+id/like"
@@ -118,6 +131,7 @@
             android:id="@+id/no_of_likes"
             android:textStyle="bold"
             android:textColor="@color/colorAccent"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -125,7 +139,8 @@
             android:textStyle="bold"
             android:id="@+id/author"
             android:textColor="@color/colorPrimaryDark"/>
-        <TextView
+
+        <com.hendraanggrian.appcompat.widget.SocialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -137,10 +152,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:id="@+id/no_of_comments"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/comments"
             android:textColor="@color/colorAccent"/>
-
 
     </LinearLayout>
 

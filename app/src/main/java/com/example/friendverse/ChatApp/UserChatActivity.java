@@ -28,7 +28,9 @@ public class UserChatActivity extends AppCompatActivity implements UserListener 
     private ActivityUserChatBinding binding;
     private UsersChatAdapter usersChatAdapter;
     List<User> userList = new ArrayList<>();
+    List<String> userFollowersListId = new ArrayList<>();
     FirebaseUser firebaseUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,9 +40,29 @@ public class UserChatActivity extends AppCompatActivity implements UserListener 
         binding.userRecyclerView.setHasFixedSize(true);
         binding.userRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.userRecyclerView.setAdapter(usersChatAdapter);
+        firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
+        initUserFollowersList();
         setContentView(binding.getRoot());
         getUsers();
         setListeners();
+    }
+
+    private void initUserFollowersList() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("followers");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                userFollowersListId=new ArrayList<>();
+                for (DataSnapshot snapshot1:snapshot.getChildren()){
+                    userFollowersListId.add(snapshot1.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void setListeners() {
@@ -55,8 +77,8 @@ public class UserChatActivity extends AppCompatActivity implements UserListener 
     private void getUsers() {
         //Mốt chỉnh lại chỉ hiện thị những người đang followed
         loading(true);
-        firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
-        String currentUserId= firebaseUser.getUid();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String currentUserId = firebaseUser.getUid();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
         //DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
@@ -67,7 +89,7 @@ public class UserChatActivity extends AppCompatActivity implements UserListener 
                 loading(false);
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    if (!(currentUserId.equals(user.getId()))) {
+                    if (!(currentUserId.equals(user.getId()))&&userFollowersListId.contains(user.getId())) {
                         userList.add(user);
                     }
                 }
@@ -104,8 +126,8 @@ public class UserChatActivity extends AppCompatActivity implements UserListener 
 
     @Override
     public void onUserClicked(User user) {
-        Intent intent= new Intent(getApplicationContext(),ChatScreenActivity.class);
-        intent.putExtra(User.USERKEY,user);
+        Intent intent = new Intent(getApplicationContext(), ChatScreenActivity.class);
+        intent.putExtra(User.USERKEY, user);
         startActivity(intent);
         finish();
     }

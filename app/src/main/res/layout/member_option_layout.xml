@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/background_content_bottom"
+    android:backgroundTint="@android:color/transparent"
+    >
+    <TextView
+        android:id="@+id/viewProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dp"
+        android:textColor="@color/colorPrimary"
+        android:text="View The Profile"
+        android:textSize="20dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="0"
+        android:background="@color/colorAccent"
+       />
+    <TextView
+        android:id="@+id/makeConversation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dp"
+        android:textColor="@color/colorPrimary"
+        android:text="Make Conversation"
+        android:textSize="20dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="0"
+        android:background="@color/colorAccent"
+        />
+    <TextView
+        android:id="@+id/removeUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dp"
+        android:textColor="#FF0000"
+        android:text="Remove From Group"
+        android:textSize="20dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_weight="0"
+        android:background="@color/icon_background"/>
+
+</LinearLayout>

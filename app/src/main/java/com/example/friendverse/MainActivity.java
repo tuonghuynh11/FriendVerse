@@ -15,12 +15,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.friendverse.Fragment.HomeFragment;
+import com.example.friendverse.Fragment.NotificationFragment;
 import com.example.friendverse.Fragment.NotifyFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Fragment.SearchFragment;
 import com.example.friendverse.Fragment.WatchFragment;
 import com.example.friendverse.Login.StartActivity;
 import com.example.friendverse.Login.StartUpActivity;
+import com.example.friendverse.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -49,10 +51,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser == null) {
-            startActivity(new Intent(MainActivity.this, StartActivity.class));
-        }
+
+
         setContentView(layout.activity_main);
 //        // auth
 //        auth = FirebaseAuth.getInstance();
@@ -83,25 +83,28 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ProfileFragment()).commit();
         }
+
+
+
         else {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                    new HomeFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new HomeFragment()).commit();
         }
     }
 
     private BottomNavigationView.OnItemSelectedListener navigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case id.nav_home:
-//                selectedFragment = new HomeFragment();
+                selectedFragment = new HomeFragment();
                 break;
             case id.nav_search:
                 selectedFragment = new SearchFragment();
                 break;
             case id.nav_watch:
-                selectedFragment = new WatchFragment();
+                //selectedFragment = new WatchFragment();
                 break;
             case id.nav_notify:
-                selectedFragment = new NotifyFragment();
+                selectedFragment = new NotificationFragment();
                 break;
             case id.nav_profile:
                 Bundle passData = new Bundle();
@@ -115,4 +118,28 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(MainActivity.this, StartActivity.class));
+            finishAffinity();
+            return;
+        }
+    }
+    protected void onResume() {
+        super.onResume();
+        if (auth.getCurrentUser()==null)
+            return;
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+        reference.child(User.ACTIVITYKEY).setValue(1);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+        reference.child(User.ACTIVITYKEY).setValue(0);
+    }
 }

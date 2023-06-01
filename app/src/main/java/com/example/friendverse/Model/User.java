@@ -32,13 +32,9 @@ public class User implements Serializable {
 
 
     private int activity;
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    private boolean isSelected= false;
+
 
     public User() {
     }
@@ -59,6 +55,22 @@ public class User implements Serializable {
         this.website = website;
         this.phonenumber = phonenumber;
 
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getTokenCall() {
