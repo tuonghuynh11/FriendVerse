@@ -1,5 +1,6 @@
 package com.example.friendverse.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +35,7 @@ public class ImageSentAdapter extends RecyclerView.Adapter<ImageSentAdapter.Imag
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImageSentViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ImageSentViewHolder holder,  int position) {
         Glide.with(activity).load(images.get(position)).into(holder.imageView);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

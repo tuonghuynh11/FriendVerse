@@ -107,17 +107,6 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
         userIsFollowingID = new ArrayList<>();
         userIsFollowingDefault = new ArrayList<>();
 
-        //User
-        activityChatBinding.userNameTextView.setText(LoginActivity.getCurrentUser.getFullname());
-        currentUser = LoginActivity.getCurrentUser;
-        if (token == "") {
-            token = LoginActivity.getCurrentUser.getTokenCall();
-            initStringeeConnection();
-        }
-
-        Picasso.get().load(LoginActivity.getCurrentUser.getImageurl()).placeholder(R.drawable.default_avatar).into(activityChatBinding.imageProfile);
-        //User
-
 
         setListeners();
         init();
@@ -393,6 +382,33 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
                 userIsFollowingID.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     userIsFollowingID.add(snapshot.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+        reference= FirebaseDatabase.getInstance().getReference().child(User.USERKEY).child(firebaseUser.getUid());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user= snapshot.getValue(User.class);
+                currentUser=user;
+                //User
+                activityChatBinding.userNameTextView.setText(currentUser.getFullname());
+                Picasso.get().load(currentUser.getImageurl()).placeholder(R.drawable.default_avatar).into(activityChatBinding.imageProfile);
+                //User
+                ////Check if have tokenCall or not and assign token
+
+
+                ///
+                if (token == "") {
+                    token = currentUser.getTokenCall();
+                    initStringeeConnection();
                 }
             }
 

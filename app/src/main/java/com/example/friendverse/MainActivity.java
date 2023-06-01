@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.friendverse.Fragment.HomeFragment;
@@ -42,7 +43,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
-    Fragment selectedFragment = null;
+    public Fragment selectedFragment = null;
 
 //    // User
     FirebaseAuth auth;
@@ -64,18 +65,25 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle intent = getIntent().getExtras();
         if (intent != null){
-            String publisher = intent.getString("publisherid");
+            String publisher = intent.getString("profileid");
             SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
             editor.putString("profileid", publisher);
             editor.apply();
 
+            Bundle bundle =new Bundle();
+            bundle.putString("profileid",publisher);
+            bundle.putString("isClose","1");
+
+            Fragment fragment =new ProfileFragment();
+            fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new ProfileFragment()).commit();
+                    fragment).commit();
         }
         else {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new HomeFragment()).commit();
         }
+
     }
 
     private BottomNavigationView.OnItemSelectedListener navigationItemSelectedListener = item -> {

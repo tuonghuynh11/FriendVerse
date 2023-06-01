@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.friendverse.Adapter.MyPhotoAdapter;
+import com.example.friendverse.ChatApp.ChatScreenActivity;
 import com.example.friendverse.Profile.FollowActivity;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
@@ -49,7 +50,7 @@ import java.util.HashMap;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
-    ImageView options, close, add;
+   public ImageView options, close, add;
     CircleImageView image_profile;
     TextView posts, followers, following, fullname, bio, username;
     Button edit_profile, share_profile;
@@ -90,6 +91,13 @@ public class ProfileFragment extends Fragment {
         my_photos = root.findViewById(R.id.my_photos);
         saved_photos = root.findViewById(R.id.save_photos);
         close = root.findViewById(R.id.close);
+        if (getArguments().getString("isClose")!=null){
+            if (getArguments().getString("isClose").equals("1")){
+                close.setVisibility(View.GONE);
+            }
+        }
+
+
         // posts
         recyclerView = root.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -250,6 +258,7 @@ public class ProfileFragment extends Fragment {
         reference.push().setValue(hashMap);
     }
 
+    public User receiverUser= new User();
     private void userInfo() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(profileid);
         reference.addValueEventListener(new ValueEventListener() {
@@ -260,6 +269,7 @@ public class ProfileFragment extends Fragment {
                 }
                 User user = new User();
                 user = snapshot.getValue(User.class);
+                receiverUser=user;
                 String img = user.getImageurl();
                 if (img == null) {
                     img = "https://play-lh.googleusercontent.com/iT_u15GsNd9BOPu_6vuUgL4t2-f0BZDGHO4ZaFqJ1ynKYs1j7TAu7P7IxK77EBh0cghQ";
@@ -281,7 +291,9 @@ public class ProfileFragment extends Fragment {
                             Toast.makeText(getContext(), "Copied Username to Clipboard", Toast.LENGTH_SHORT).show();
                         }
                         else if (button.equals("Message")) {
-
+                            Intent i =new Intent(getActivity(), ChatScreenActivity.class);
+                            i.putExtra(User.USERKEY, receiverUser);
+                            startActivity(i);
                         }
                     }
                 });
