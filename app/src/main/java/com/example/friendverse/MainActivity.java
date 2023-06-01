@@ -21,6 +21,7 @@ import com.example.friendverse.Fragment.SearchFragment;
 import com.example.friendverse.Fragment.WatchFragment;
 import com.example.friendverse.Login.StartActivity;
 import com.example.friendverse.Login.StartUpActivity;
+import com.example.friendverse.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new SearchFragment();
                 break;
             case id.nav_watch:
-                selectedFragment = new WatchFragment();
+                //selectedFragment = new WatchFragment();
                 break;
             case id.nav_notify:
                 selectedFragment = new NotifyFragment();
@@ -115,4 +116,26 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser= auth.getCurrentUser();
+        if (currentUser==null){
+            startActivity(new Intent(MainActivity.this, StartUpActivity.class));
+        }
+    }
+    protected void onResume() {
+        super.onResume();
+        if (auth.getCurrentUser()==null)
+            return;
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+        reference.child(User.ACTIVITYKEY).setValue(1);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+        reference.child(User.ACTIVITYKEY).setValue(0);
+    }
 }

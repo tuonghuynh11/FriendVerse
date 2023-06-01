@@ -17,6 +17,7 @@
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginLeft="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_12sdp"
+            android:background="@drawable/background_icon"
             android:padding="@dimen/_6sdp"
             android:src="@drawable/ic_back"
             android:tint="@color/white"
@@ -48,6 +49,19 @@
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/imageProfile"
             app:layout_constraintTop_toTopOf="@id/imageProfile" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/groupBtn"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:padding="@dimen/_6sdp"
+            android:src="@drawable/ic_group"
+            android:tint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/userChatStatusRecyclerView"
@@ -88,7 +102,7 @@
                 android:layout_gravity="center"
 
                 />
-                
+
 
 
         </FrameLayout>
@@ -98,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_24sdp"
             android:layout_marginBottom="@dimen/_24sdp"
-            android:src="@drawable/ic_add"
+            android:src="@drawable/baseline_add"
             android:backgroundTint="@color/primary"
             android:contentDescription="@string/app_name"
             app:layout_constraintBottom_toBottomOf="parent"

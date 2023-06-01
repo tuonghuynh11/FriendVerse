@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:background="@color/primary"
-        tools:context=".ChatApp.ChatScreenActivity">
+        tools:context=".ChatApp.GroupChatScreenActivity">
 
         <FrameLayout
             android:id="@+id/imageReviewLayout"
@@ -94,36 +94,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/voiceCall"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_16sdp"
-            android:translationZ="@dimen/_90sdp"
-            android:padding="@dimen/_4sdp"
-            android:src="@drawable/ic_voice_call"
-            android:tint="@color/white"
-            app:layout_constraintEnd_toStartOf="@id/videoCall"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/videoCall"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:layout_marginRight="@dimen/_16sdp"
-            android:translationZ="@dimen/_90sdp"
-            android:padding="@dimen/_4sdp"
-            android:src="@drawable/ic_videocall"
-            android:tint="@color/white"
-            app:layout_constraintEnd_toStartOf="@+id/moreInfo"
-            app:layout_constraintTop_toTopOf="parent" />
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/moreInfo"
             android:layout_width="@dimen/_30sdp"
@@ -141,7 +111,7 @@
 
 
         <TextView
-            android:id="@+id/textName"
+            android:id="@+id/groupName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
@@ -151,11 +121,28 @@
             android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="@dimen/_14sdp"
+            android:text="adfadfadfadf"
             android:translationZ="@dimen/_90sdp"
-            app:layout_constraintBottom_toBottomOf="@id/videoCall"
-            app:layout_constraintEnd_toStartOf="@id/videoCall"
+            app:layout_constraintBottom_toBottomOf="@id/moreInfo"
+            app:layout_constraintEnd_toStartOf="@id/moreInfo"
             app:layout_constraintStart_toEndOf="@id/imageBack"
             app:layout_constraintTop_toTopOf="@id/imageBack" />
+
+        <TextView
+            android:id="@+id/numberOfMember"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:maxLines="1"
+            android:textColor="#D3CDCD"
+            android:textSize="@dimen/_10sdp"
+            android:text="18 members"
+            android:translationZ="@dimen/_90sdp"
+            app:layout_constraintTop_toBottomOf="@+id/groupName"
+            app:layout_constraintStart_toStartOf="@+id/groupName"
+            />
 
         <View
             android:id="@+id/viewSupporter"
