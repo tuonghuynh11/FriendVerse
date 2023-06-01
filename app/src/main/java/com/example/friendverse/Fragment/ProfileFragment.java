@@ -126,7 +126,7 @@ public class ProfileFragment extends Fragment {
                     Fragment editFragment = new EditProfileFragment();
                     FragmentManager fragmentManager = getParentFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, editFragment);
+                    fragmentTransaction.replace(R.id.fragment_container, editFragment).addToBackStack(null);
                     fragmentTransaction.commit();
                 }
                 else if (button.equals("Follow")) {
