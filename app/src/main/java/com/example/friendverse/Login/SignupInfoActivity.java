@@ -143,7 +143,7 @@ public class SignupInfoActivity extends AppCompatActivity {
 
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put("id", userid);
-                    hashMap.put("username", username.toLowerCase());
+                    hashMap.put("username", userid);
                     hashMap.put("fullname", fullname);
                     hashMap.put("bio", "");
                     hashMap.put("imageurl", "default");

@@ -3,6 +3,7 @@ package com.example.friendverse.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,10 +14,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.friendverse.Login.LoginActivity;
 import com.example.friendverse.Login.StartActivity;
 import com.example.friendverse.MainActivity;
 import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -28,7 +35,7 @@ public class SettingFragment extends Fragment {
     public SettingFragment() {
         // Required empty public constructor
     }
-
+    private GoogleSignInClient googleSignInClient;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +78,15 @@ public class SettingFragment extends Fragment {
             public void onClick(View view) {
                 ProfileFragment.bottomSheetDialog.cancel();
                 FirebaseAuth.getInstance().signOut();
+                googleSignInClient = GoogleSignIn.getClient(requireActivity(), GoogleSignInOptions.DEFAULT_SIGN_IN);
+                googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+
+                        }
+                    }
+                });
                 startActivity(new Intent(view.getContext(), StartActivity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
