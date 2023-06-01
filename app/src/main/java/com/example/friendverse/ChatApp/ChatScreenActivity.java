@@ -108,6 +108,10 @@ public class ChatScreenActivity extends AppCompatActivity {
 //    public static Map<String, StringeeCall> callMap= new HashMap<>();
 //    public static Map<String, StringeeCall2> videocallMap= new HashMap<>();
 
+
+    //Notification
+    private int isNotification = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +120,11 @@ public class ChatScreenActivity extends AppCompatActivity {
         setContentView(activityChatScreenBinding.getRoot());
         storageReference = FirebaseStorage.getInstance().getReference("chatImages");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (getIntent().getExtras()!=null){
+            if (getIntent().getStringExtra("notification")!=null){
+                isNotification=1;
+            }
+        }
         loadReceiverDetails();
         setListeners();
         init();
@@ -126,7 +135,7 @@ public class ChatScreenActivity extends AppCompatActivity {
     private void init() {
         chatMessages = new ArrayList<>();
         chatAdapter = new ChatAdapter(
-                Picasso.get().load(receiverUser.getImageurl()).placeholder(R.drawable.default_avatar).toString(),
+                receiverUser.getImageurl(),
                 chatMessages,
                 firebaseUser.getUid(),
                 ChatScreenActivity.this
@@ -205,7 +214,6 @@ public class ChatScreenActivity extends AppCompatActivity {
     }
 
     private void checkConversionID() {
-        //Lỗi recent message không update cái cũ
         DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(ChatMessage.KEY_COLLECTION_CONVERSATION);
 
         reference2.addValueEventListener(new ValueEventListener() {
@@ -216,8 +224,8 @@ public class ChatScreenActivity extends AppCompatActivity {
                     String receiverid = snapshot.child(ChatMessage.RECEIVERIDKEY).getValue().toString();
                     if ((senderUser.getId().equals(senderid) && receiverUser.getId().equals(receiverid)) || (senderUser.getId().equals(receiverid) && receiverUser.getId().equals(senderid))) {
                         conversationId = snapshot.getKey().toString();
-                        if (chatAdapter.conversionID==null)
-                            chatAdapter.conversionID=conversationId;
+                        if (chatAdapter.conversionID == null)
+                            chatAdapter.conversionID = conversationId;
                     }
                 }
             }
@@ -236,7 +244,7 @@ public class ChatScreenActivity extends AppCompatActivity {
             Toast.makeText(this, "Can not send an empty message", Toast.LENGTH_SHORT).show();
             return;
         }
-        String key= reference.push().getKey();
+        String key = reference.push().getKey();
         HashMap<String, Object> message = new HashMap<>();
         message.put("id", key);
         message.put("senderId", firebaseUser.getUid());
@@ -246,7 +254,7 @@ public class ChatScreenActivity extends AppCompatActivity {
         message.put("messageType", "text");
         reference.child(key).setValue(message);
 
-        getToken( activityChatScreenBinding.inputMessage.getText().toString(),senderUser.getUsername(),senderUser.getFullname(),senderUser.getId(),receiverUser.getId(),senderUser.getImageurl());
+        getToken(activityChatScreenBinding.inputMessage.getText().toString(), senderUser.getUsername(), senderUser.getFullname(), senderUser.getId(), receiverUser.getId(), senderUser.getImageurl());
         if (conversationId != null) {
             updateConversion(activityChatScreenBinding.inputMessage.getText().toString());
         } else {
@@ -261,9 +269,9 @@ public class ChatScreenActivity extends AppCompatActivity {
             conversion.put(ChatMessage.DATETIMEKEY, new Date());
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(ChatMessage.KEY_COLLECTION_CONVERSATION);
             conversationId = reference.push().getKey();
-            if (chatAdapter.conversionID==null)
-                chatAdapter.conversionID=conversationId;
-            chatAdapter.lastConversion= activityChatScreenBinding.inputMessage.getText().toString();
+            if (chatAdapter.conversionID == null)
+                chatAdapter.conversionID = conversationId;
+            chatAdapter.lastConversion = activityChatScreenBinding.inputMessage.getText().toString();
 
             reference.child(conversationId).setValue(conversion);
 
@@ -271,9 +279,10 @@ public class ChatScreenActivity extends AppCompatActivity {
         }
         activityChatScreenBinding.inputMessage.setText(null);
     }
+
     //Push Notification
-    private void getToken(String message, String username,String fullName, String userID,String hisId, String userImage){
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference(User.USERKEY).child(hisId);
+    private void getToken(String message, String username, String fullName, String userID, String hisId, String userImage) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(User.USERKEY).child(hisId);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -289,6 +298,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                     data.put("message", message);
                     data.put("hisID", userID);
                     data.put("hisImage", userImage);
+                    data.put("type", "normal");
 
 
                     to.put("to", token);
@@ -342,7 +352,7 @@ public class ChatScreenActivity extends AppCompatActivity {
     private void updateConversion(String message) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(ChatMessage.KEY_COLLECTION_CONVERSATION).child(conversationId);
         reference.child(ChatMessage.KEY_LAST_MESSAGE).setValue(message);
-        chatAdapter.lastConversion= message;
+        chatAdapter.lastConversion = message;
 
     }
 
@@ -380,7 +390,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
 
                         String postid = reference.push().getKey();
-                        String key= reference.push().getKey();
+                        String key = reference.push().getKey();
                         HashMap<String, Object> message = new HashMap<>();
                         message.put("id", key);
                         message.put("senderId", firebaseUser.getUid());
@@ -389,7 +399,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                         message.put("dateObject", new Date());
                         message.put("messageType", "image");
                         reference.child(key).setValue(message);
-                        getToken( "image",senderUser.getUsername(),senderUser.getFullname(),senderUser.getId(),receiverUser.getId(),senderUser.getImageurl());
+                        getToken("image", senderUser.getUsername(), senderUser.getFullname(), senderUser.getId(), receiverUser.getId(), senderUser.getImageurl());
 
                         if (conversationId != null) {
                             updateConversion("image");
@@ -406,9 +416,9 @@ public class ChatScreenActivity extends AppCompatActivity {
                             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(ChatMessage.KEY_COLLECTION_CONVERSATION);
                             conversationId = reference1.push().getKey();
                             reference1.child(conversationId).setValue(conversion);
-                            if (chatAdapter.conversionID==null)
-                                chatAdapter.conversionID=conversationId;
-                            chatAdapter.lastConversion= activityChatScreenBinding.inputMessage.getText().toString();
+                            if (chatAdapter.conversionID == null)
+                                chatAdapter.conversionID = conversationId;
+                            chatAdapter.lastConversion = activityChatScreenBinding.inputMessage.getText().toString();
 
 
                         }
@@ -444,7 +454,14 @@ public class ChatScreenActivity extends AppCompatActivity {
         activityChatScreenBinding.imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                if (isNotification==1){
+                    Intent i= new Intent(getApplicationContext(),ChatActivity.class);
+                    finishAffinity();
+                    startActivity(i);
+                }
+                else {
+                    onBackPressed();
+                }
             }
         });
         activityChatScreenBinding.layoutSend.setOnClickListener(new View.OnClickListener() {
@@ -609,9 +626,9 @@ public class ChatScreenActivity extends AppCompatActivity {
 //                if (receiverUser==null){
 //                  loadReceiverDetails();
 //                }
-                Intent intent=new Intent(getApplicationContext(), CallActivity.class);
-                intent.putExtra("to",receiverUser.getUsername().trim());
-                intent.putExtra("isInComingCall",false);
+                Intent intent = new Intent(getApplicationContext(), CallActivity.class);
+                intent.putExtra("to", receiverUser.getUsername().trim());
+                intent.putExtra("isInComingCall", false);
                 startActivity(intent);
 //               initStringeeConnection();
             }
@@ -619,11 +636,11 @@ public class ChatScreenActivity extends AppCompatActivity {
         activityChatScreenBinding.videoCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getApplicationContext(), videoCallActivity.class);
-                intent.putExtra("to",receiverUser.getUsername().trim());
-                intent.putExtra("isInComingCall",false);
+                Intent intent = new Intent(getApplicationContext(), videoCallActivity.class);
+                intent.putExtra("to", receiverUser.getUsername().trim());
+                intent.putExtra("isInComingCall", false);
                 startActivity(intent);
-               // initStringeeConnection();
+                // initStringeeConnection();
 
             }
         });
@@ -631,8 +648,9 @@ public class ChatScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), ImageSentGalleryActivity.class);
-                i.putExtra("interacter",receiverUser.getId());
-                i.putExtra("interacterImage",receiverUser.getImageurl());
+                i.putExtra("interacter", receiverUser.getId());
+                i.putExtra("interacterImage", receiverUser.getImageurl());
+                i.putExtra("interacterFullName", receiverUser.getFullname());
                 startActivity(i);
             }
         });
@@ -718,7 +736,6 @@ public class ChatScreenActivity extends AppCompatActivity {
 //    }
 
 
-
     private void setUpRecording() {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -744,7 +761,7 @@ public class ChatScreenActivity extends AppCompatActivity {
 
         if (audioPath != null) {
             final StorageReference filereference = storageReference.child(System.currentTimeMillis() + "");
-            Uri audioFile=Uri.fromFile(new File(audioPath));
+            Uri audioFile = Uri.fromFile(new File(audioPath));
             uploadTask = filereference.putFile(audioFile);
             uploadTask.continueWithTask(new Continuation() {
                 @Override
@@ -765,7 +782,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
 
                         String postid = reference.push().getKey();
-                        String key= reference.push().getKey();
+                        String key = reference.push().getKey();
 
                         HashMap<String, Object> message = new HashMap<>();
                         message.put("id", key);
@@ -775,7 +792,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                         message.put("dateObject", new Date());
                         message.put("messageType", "audio");
                         reference.child(key).setValue(message);
-                        getToken( "audio",senderUser.getUsername(),senderUser.getFullname(),senderUser.getId(),receiverUser.getId(),senderUser.getImageurl());
+                        getToken("audio", senderUser.getUsername(), senderUser.getFullname(), senderUser.getId(), receiverUser.getId(), senderUser.getImageurl());
 
                         if (conversationId != null) {
                             updateConversion("audio");
@@ -791,9 +808,9 @@ public class ChatScreenActivity extends AppCompatActivity {
                             conversion.put(ChatMessage.DATETIMEKEY, new Date());
                             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(ChatMessage.KEY_COLLECTION_CONVERSATION);
                             conversationId = reference1.push().getKey();
-                            if (chatAdapter.conversionID==null)
-                                chatAdapter.conversionID=conversationId;
-                            chatAdapter.lastConversion= activityChatScreenBinding.inputMessage.getText().toString();
+                            if (chatAdapter.conversionID == null)
+                                chatAdapter.conversionID = conversationId;
+                            chatAdapter.lastConversion = activityChatScreenBinding.inputMessage.getText().toString();
 
                             reference1.child(conversationId).setValue(conversion);
 

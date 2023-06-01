@@ -55,6 +55,7 @@ import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import javax.activation.MimeType;
 
@@ -183,23 +184,38 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 loadingDialog.showDialog();
-                if(imageUri != null){
-                    uploadToFirebase(imageUri);
+                if(!IsValidPhone(etPhone.getText().toString())){
+                    etPhone.setError("Phone is not valid");
+                    etPhone.requestFocus();
+                    loadingDialog.hideDialog();
+                    return;
+                }
+                else if(!IsValidEmail(etEmail.getText().toString())){
+                    etEmail.setError("Email is not valid");
+                    etEmail.requestFocus();
+
+                    loadingDialog.hideDialog();
+                    return;
                 }
                 else{
-                    Toast.makeText(getActivity(), "No image", Toast.LENGTH_SHORT).show();
+                    if(imageUri != null){
+                        uploadToFirebase(imageUri);
+                    }
+
+                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                    String userID = firebaseUser.getUid();
+                    reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
+                    reference.child(User.FULLNAMEKEY).setValue(etFullname.getText().toString());
+                    reference.child(User.USERNAMEKEY).setValue(etUsername.getText().toString());
+                    reference.child(User.BIOKEY).setValue(etBio.getText().toString());
+                    reference.child(User.WEBSITEKEY).setValue(etWebsite.getText().toString());
+                    reference.child(User.EMAILOKEY).setValue(etEmail.getText().toString());
+                    reference.child(User.PHONEKEY).setValue(etPhone.getText().toString());
+                    loadingDialog.hideDialog();
+                    Toast.makeText(getActivity(), "Changes done", Toast.LENGTH_SHORT).show();
                 }
-                FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                String userID = firebaseUser.getUid();
-                reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
-                reference.child(User.FULLNAMEKEY).setValue(etFullname.getText().toString());
-                reference.child(User.USERNAMEKEY).setValue(etUsername.getText().toString());
-                reference.child(User.BIOKEY).setValue(etBio.getText().toString());
-                reference.child(User.WEBSITEKEY).setValue(etWebsite.getText().toString());
-                reference.child(User.EMAILOKEY).setValue(etEmail.getText().toString());
-                reference.child(User.PHONEKEY).setValue(etPhone.getText().toString());
-                loadingDialog.hideDialog();
-                Toast.makeText(getActivity(), "Changes done", Toast.LENGTH_SHORT).show();
+
+
 
             }
         });
@@ -312,4 +328,24 @@ public class EditProfileFragment extends Fragment {
         requestPermissions(new String[]{android.Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_REQUEST);
     }
 
+    private boolean IsValidEmail(String email){
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        if(email == null){
+            return false;
+        }
+        return pattern.matcher(email).matches();
+    }
+
+    private boolean IsValidPhone(String phone){
+        String phoneRegex = "(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})";
+        Pattern pattern = Pattern.compile(phoneRegex);
+        if(phone == null){
+            return false;
+        }
+        return pattern.matcher(phone).matches();
+    }
 }

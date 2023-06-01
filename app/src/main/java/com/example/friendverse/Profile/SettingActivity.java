@@ -40,6 +40,7 @@ public class SettingActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(SettingActivity.this, StartActivity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finishAffinity();
             }
         });
     }

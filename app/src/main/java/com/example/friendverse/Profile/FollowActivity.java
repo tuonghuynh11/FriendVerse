@@ -1,5 +1,6 @@
 package com.example.friendverse.Profile;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,6 +68,9 @@ public class FollowActivity extends AppCompatActivity {
             case "Followers":
                 getFollowers();
                 break;
+            case "Likes" :
+                getLikes();
+                break;
         }
 
         close.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +120,27 @@ public class FollowActivity extends AppCompatActivity {
             }
         });
     }
+    private void getLikes() {
 
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Likes").child(id);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                idList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    idList.add(snapshot.getKey());
+                }
+                showUsers();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
     private void showUsers() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {

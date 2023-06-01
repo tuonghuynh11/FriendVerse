@@ -65,6 +65,10 @@ public class ChatMessage {
     private String conversionId;
     private String conversionName;
     private String conversionImage;
+
+
+
+    private String conversionIdentify;
     public ChatMessage(String id, String senderId, String receiverId, String message, Date dateObject, String messageType) {
         this.id = id;
         this.senderId = senderId;
@@ -77,6 +81,13 @@ public class ChatMessage {
     public ChatMessage() {
     }
 
+    public String getConversionIdentify() {
+        return conversionIdentify;
+    }
+
+    public void setConversionIdentify(String conversionIdentify) {
+        this.conversionIdentify = conversionIdentify;
+    }
     public String getId() {
         return id;
     }

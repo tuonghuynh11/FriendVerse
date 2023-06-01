@@ -93,11 +93,13 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
                             break;
                         }
 
-
-                        //Lỗi có dòng If này thì không có thông báo
                     }
 
                     user.setId(chatMessage.getConversionId());
+                    if (user.getId().contains("group")){
+                        user.setUsername(chatMessage.getConversionName());
+                        user.setEmail(chatMessage.getConversionIdentify());
+                    }
                     user.setFullname(chatMessage.getConversionName());
                     user.setImageurl(chatMessage.getConversionImage());
                     conversionListener.onConversionClicked(user);

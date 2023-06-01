@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.VideoView;
+
 import com.example.friendverse.R;
 import com.example.friendverse.Adapter.PostAdapter;
 import com.example.friendverse.Model.Post;
@@ -27,6 +30,7 @@ import java.util.List;
         private RecyclerView recyclerView;
         private PostAdapter postAdapter;
         private List<Post> postLists;
+
 
         private List<String> followingList;
 

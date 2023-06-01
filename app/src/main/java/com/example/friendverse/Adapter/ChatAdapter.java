@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.friendverse.Model.ChatMessage;
 import com.example.friendverse.ChatApp.PreviewImageActivity;
+import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
 import com.example.friendverse.databinding.ItemContainerReceivedAudioBinding;
 import com.example.friendverse.databinding.ItemContainerReceivedImageBinding;
@@ -24,20 +25,26 @@ import com.example.friendverse.databinding.ItemContainerSendImageBinding;
 import com.example.friendverse.databinding.ItemContainerSendMessageBinding;
 import com.example.friendverse.databinding.ItemContainerUnsedSenderBinding;
 import com.example.friendverse.databinding.ItemContainerUnsendReceiverBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final String receiverProfileImageLink;
+    private  String receiverProfileImageLink;
     private final List<ChatMessage> chatMessages;
     private final String senderId;
     public String conversionID;
     public String lastConversion;
+
+    private List<User> allUsers;
 
     public static final int VIEW_TYPE_SENT = 1;
     public static final int VIEW_TYPE_RECEIVED = 2;
@@ -57,6 +64,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.chatMessages = chatMessages;
         this.senderId = senderId;
         this.activity=activity;
+        this.allUsers= new ArrayList<>();
+        addAllUser();
     }
 
     @NonNull
@@ -121,9 +130,36 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
-    //send hình
+    //Add allUser
+    void addAllUser(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child(User.USERKEY);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snapshot1:snapshot.getChildren()){
+                    User user= snapshot1.getValue(User.class);
+                    allUsers.add(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    //find UserImageForGroup
+    void updateReceiverProfileImageLink(String id){
+        for (User user:allUsers){
+            if (user.getId().equals(id)){
+                receiverProfileImageLink= user.getImageurl();
+                return;
+            }
+        }
+    }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        updateReceiverProfileImageLink(chatMessages.get(position).getSenderId());
         if (getItemViewType(position) == VIEW_TYPE_SENT) {
             ((SentMessageViewHolder) holder).setData(chatMessages.get(position));
             if (chatMessages.get(position).getSenderId().equals(senderId)) {

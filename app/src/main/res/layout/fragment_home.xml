@@ -7,8 +7,9 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home" />
+        android:layout_height="wrap_content"
+        android:id="@+id/bar"
+        android:background="?android:attr/windowBackground">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
@@ -33,7 +34,6 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginRight="40dp"
                     android:src="@drawable/ic_inbox" />
-
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="25dp"
@@ -46,10 +46,12 @@
 
         </androidx.appcompat.widget.Toolbar>
 
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/bar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,10 +73,10 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progress_circular"
-        android:layout_centerInParent="true"/>
+<!--    <ProgressBar-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/progress_circular"-->
+<!--        android:layout_centerInParent="true"/>-->
 
 </RelativeLayout>
