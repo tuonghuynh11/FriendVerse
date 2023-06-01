@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.friendverse.DialogLoadingBar.LoadingDialog;
+import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -157,6 +159,9 @@ public class SignupInfoActivity extends AppCompatActivity {
 
                         }
                     });
+
+                    initTokenCall();
+
                     Toast.makeText(SignupInfoActivity.this, "success", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), SignupFinishActivity.class);
                     intent.putExtra("UID", uid);
@@ -200,6 +205,22 @@ public class SignupInfoActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+    public void initTokenCall() {
+        runOnUiThread(() -> {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                @Override
+                public void onComplete(@NonNull Task<String> task) {
+                    if (task.isSuccessful()) {
+                        String deviceToken = task.getResult();
+
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+                        reference.child(User.TOKENKEY).setValue(deviceToken);
+                    }
+                }
+            });
+        });
 
     }
 }

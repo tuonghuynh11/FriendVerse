@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.fragment.app.Fragment;
+
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,9 @@ import com.example.friendverse.Fragment.NotifyFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Fragment.SearchFragment;
 import com.example.friendverse.Fragment.WatchFragment;
+import com.example.friendverse.Login.StartActivity;
+import com.example.friendverse.Login.StartUpActivity;
+import com.example.friendverse.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -24,6 +29,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,46 +42,49 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     Fragment selectedFragment = null;
 
-    // User
+//    // User
     FirebaseAuth auth;
-    //
+//    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(layout.activity_main);
-        Objects.requireNonNull(getSupportActionBar()).hide();
-
-        // auth
         auth = FirebaseAuth.getInstance();
-        String email = "nguyenthaicong265@gmail.com";
-        String pass = "thaicong";
-        //
-        auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(MainActivity.this, task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(MainActivity.this, "Successful", Toast.LENGTH_SHORT).show();
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("User").child(auth.getCurrentUser().getUid());
-            }
-            else {
-                Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-        //
+
+
+        setContentView(layout.activity_main);
+//        // auth
+//        auth = FirebaseAuth.getInstance();
+//        String email = "nguyenthaicong265@gmail.com";
+//        String pass = "thaicong";
+//        //
+//        auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(MainActivity.this, task -> {
+//            if (task.isSuccessful()) {
+//                Toast.makeText(MainActivity.this, "Successful", Toast.LENGTH_SHORT).show();
+//                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("User").child(auth.getCurrentUser().getUid());
+//            }
+//            else {
+//                Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        //
 
         bottomNavigationView = findViewById(id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(navigationItemSelectedListener);
 
-//        Bundle intent = getIntent().getExtras();
-//        if (intent != null){
-//            String publisher = intent.getString("publisherid");
-//            SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-//            editor.putString("profileid", publisher);
-//            editor.apply();
-//
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                    new ProfileFragment()).commit();
-//        } else {
+        Bundle intent = getIntent().getExtras();
+        if (intent != null){
+            String publisher = intent.getString("publisherid");
+            SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+            editor.putString("profileid", publisher);
+            editor.apply();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new ProfileFragment()).commit();
+        }
+
+
+//        else {
 //            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
 //                    new HomeFragment()).commit();
 //        }
@@ -84,13 +93,13 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView.OnItemSelectedListener navigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case id.nav_home:
-                selectedFragment = new HomeFragment();
+//                selectedFragment = new HomeFragment();
                 break;
             case id.nav_search:
                 selectedFragment = new SearchFragment();
                 break;
             case id.nav_watch:
-                selectedFragment = new WatchFragment();
+                //selectedFragment = new WatchFragment();
                 break;
             case id.nav_notify:
                 selectedFragment = new NotifyFragment();
@@ -107,4 +116,28 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(MainActivity.this, StartActivity.class));
+            finishAffinity();
+            return;
+        }
+    }
+    protected void onResume() {
+        super.onResume();
+        if (auth.getCurrentUser()==null)
+            return;
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+        reference.child(User.ACTIVITYKEY).setValue(1);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+        reference.child(User.ACTIVITYKEY).setValue(0);
+    }
 }

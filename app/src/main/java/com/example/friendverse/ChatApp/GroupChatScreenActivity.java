@@ -37,6 +37,7 @@ import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
 import com.example.friendverse.Service.MyFirebaseMessagingService;
 import com.example.friendverse.databinding.ActivityChatScreenBinding;
+import com.example.friendverse.databinding.ActivityGroupChatScreenBinding;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -70,10 +71,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ChatScreenActivity extends AppCompatActivity {
+public class GroupChatScreenActivity extends AppCompatActivity {
     private User receiverUser;
     private User senderUser;
-    private ActivityChatScreenBinding activityChatScreenBinding;
+    private ActivityGroupChatScreenBinding activityGroupChatScreenBinding;
 
     private List<ChatMessage> chatMessages;
     private ChatAdapter chatAdapter;
@@ -100,32 +101,27 @@ public class ChatScreenActivity extends AppCompatActivity {
     String myUrl;
     StorageTask uploadTask;
     StorageReference storageReference;
-
-    //Call video, voice call
-
-//    private String token="";
-//    public static com.stringee.StringeeClient client;
-//    public static Map<String, StringeeCall> callMap= new HashMap<>();
-//    public static Map<String, StringeeCall2> videocallMap= new HashMap<>();
-
-
-    //Notification
-    private int isNotification = 0;
+    //Members List
+    private List<String> memberIds;
+    private int isNotification=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_screen);
-        activityChatScreenBinding = ActivityChatScreenBinding.inflate(getLayoutInflater());
-        setContentView(activityChatScreenBinding.getRoot());
+        // setContentView(R.layout.activity_chat_screen);
+        activityGroupChatScreenBinding = ActivityGroupChatScreenBinding.inflate(getLayoutInflater());
+        setContentView(activityGroupChatScreenBinding.getRoot());
         storageReference = FirebaseStorage.getInstance().getReference("chatImages");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        loadReceiverDetails();
+
+
         if (getIntent().getExtras()!=null){
             if (getIntent().getStringExtra("notification")!=null){
                 isNotification=1;
             }
         }
-        loadReceiverDetails();
+
         setListeners();
         init();
         listenMessages();
@@ -133,14 +129,15 @@ public class ChatScreenActivity extends AppCompatActivity {
     }
 
     private void init() {
+        memberIds = new ArrayList<>();
         chatMessages = new ArrayList<>();
         chatAdapter = new ChatAdapter(
                 receiverUser.getImageurl(),
                 chatMessages,
                 firebaseUser.getUid(),
-                ChatScreenActivity.this
+                GroupChatScreenActivity.this
         );
-        activityChatScreenBinding.chatRecyclerView.setAdapter(chatAdapter);
+        activityGroupChatScreenBinding.chatRecyclerView.setAdapter(chatAdapter);
         reference = FirebaseDatabase.getInstance().getReference().child("Chats");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -170,40 +167,13 @@ public class ChatScreenActivity extends AppCompatActivity {
 
             }
         });
-        checkConversionID();
-
-
-    }
-
-    private void listenMessages() {
-        reference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference("GroupChats").child(receiverUser.getId()).child("members");
+        reference2.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int count = chatMessages.size();
-                chatMessages.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
-                    if (chatMessage.getSenderId().equals(firebaseUser.getUid()) && chatMessage.getReceiverId().equals(receiverUser.getId())) {
-                        chatMessage.setDateTime(getDateTime(chatMessage.getDateObject()));
-                        chatMessages.add(chatMessage);
-                    } else if (chatMessage.getReceiverId().equals(firebaseUser.getUid()) && chatMessage.getSenderId().equals(receiverUser.getId())) {
-                        chatMessage.setDateTime(getDateTime(chatMessage.getDateObject()));
-                        chatMessages.add(chatMessage);
-                    }
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    memberIds.add(snapshot1.getKey().toString());
                 }
-                Collections.sort(chatMessages, (obj1, obj2) -> obj1.getDateObject().compareTo(obj2.getDateObject()));
-                if (chatMessages.size() == count) {
-                    chatAdapter.notifyDataSetChanged();
-
-                } else {
-                    chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
-                    activityChatScreenBinding.chatRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-                    activityChatScreenBinding.chatRecyclerView.setHasFixedSize(false);
-
-                }
-                activityChatScreenBinding.chatRecyclerView.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.progressBar.setVisibility(View.GONE);
-//                chatAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -211,6 +181,7 @@ public class ChatScreenActivity extends AppCompatActivity {
 
             }
         });
+        checkConversionID();
     }
 
     private void checkConversionID() {
@@ -222,7 +193,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String senderid = snapshot.child(ChatMessage.SENDERIDKEY).getValue().toString();
                     String receiverid = snapshot.child(ChatMessage.RECEIVERIDKEY).getValue().toString();
-                    if ((senderUser.getId().equals(senderid) && receiverUser.getId().equals(receiverid)) || (senderUser.getId().equals(receiverid) && receiverUser.getId().equals(senderid))) {
+                    if (receiverid.equals(receiverUser.getId())) {
                         conversationId = snapshot.getKey().toString();
                         if (chatAdapter.conversionID == null)
                             chatAdapter.conversionID = conversationId;
@@ -239,24 +210,60 @@ public class ChatScreenActivity extends AppCompatActivity {
 
     }
 
+    private void listenMessages() {
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int count = chatMessages.size();
+                chatMessages.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
+                    if (chatMessage.getReceiverId().equals(receiverUser.getId())) {
+                        chatMessage.setDateTime(getDateTime(chatMessage.getDateObject()));
+                        chatMessages.add(chatMessage);
+                    }
+                }
+                Collections.sort(chatMessages, (obj1, obj2) -> obj1.getDateObject().compareTo(obj2.getDateObject()));
+                if (chatMessages.size() == count) {
+                    chatAdapter.notifyDataSetChanged();
+
+                } else {
+                    chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
+                    activityGroupChatScreenBinding.chatRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
+                    activityGroupChatScreenBinding.chatRecyclerView.setHasFixedSize(false);
+
+                }
+                activityGroupChatScreenBinding.chatRecyclerView.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.progressBar.setVisibility(View.GONE);
+//                chatAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
     private void sendMessage() {
-        if (activityChatScreenBinding.inputMessage.getText().toString() == "" || activityChatScreenBinding.inputMessage.getText().toString().isEmpty()) {
+        if (activityGroupChatScreenBinding.inputMessage.getText().toString() == "" || activityGroupChatScreenBinding.inputMessage.getText().toString().isEmpty()) {
             Toast.makeText(this, "Can not send an empty message", Toast.LENGTH_SHORT).show();
             return;
         }
         String key = reference.push().getKey();
         HashMap<String, Object> message = new HashMap<>();
-        message.put("id", key);
+        message.put("id", key + "group");
         message.put("senderId", firebaseUser.getUid());
         message.put("receiverId", receiverUser.getId());
-        message.put("message", activityChatScreenBinding.inputMessage.getText().toString());
+        message.put("message", activityGroupChatScreenBinding.inputMessage.getText().toString());
         message.put("dateObject", new Date());
         message.put("messageType", "text");
         reference.child(key).setValue(message);
 
-        getToken(activityChatScreenBinding.inputMessage.getText().toString(), senderUser.getUsername(), senderUser.getFullname(), senderUser.getId(), receiverUser.getId(), senderUser.getImageurl());
+        getToken(activityGroupChatScreenBinding.inputMessage.getText().toString(), senderUser.getUsername(), senderUser.getFullname(), senderUser.getId(), receiverUser.getId(), senderUser.getImageurl());
         if (conversationId != null) {
-            updateConversion(activityChatScreenBinding.inputMessage.getText().toString());
+            updateConversion(activityGroupChatScreenBinding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversion = new HashMap<>();
             conversion.put(ChatMessage.SENDERIDKEY, firebaseUser.getUid());
@@ -265,50 +272,53 @@ public class ChatScreenActivity extends AppCompatActivity {
             conversion.put(ChatMessage.RECEIVERIDKEY, receiverUser.getId());
             conversion.put(ChatMessage.KEY_RECEIVER_NAME, receiverUser.getFullname());
             conversion.put(ChatMessage.KEY_RECEIVER_IMAGE, receiverUser.getImageurl());
-            conversion.put(ChatMessage.KEY_LAST_MESSAGE, activityChatScreenBinding.inputMessage.getText().toString());
+            conversion.put(ChatMessage.KEY_LAST_MESSAGE, activityGroupChatScreenBinding.inputMessage.getText().toString());
             conversion.put(ChatMessage.DATETIMEKEY, new Date());
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(ChatMessage.KEY_COLLECTION_CONVERSATION);
             conversationId = reference.push().getKey();
             if (chatAdapter.conversionID == null)
                 chatAdapter.conversionID = conversationId;
-            chatAdapter.lastConversion = activityChatScreenBinding.inputMessage.getText().toString();
+            chatAdapter.lastConversion = activityGroupChatScreenBinding.inputMessage.getText().toString();
 
-            reference.child(conversationId).setValue(conversion);
-
-
+            reference.child(conversationId + "group").setValue(conversion);
         }
-        activityChatScreenBinding.inputMessage.setText(null);
+        activityGroupChatScreenBinding.inputMessage.setText(null);
     }
 
     //Push Notification
     private void getToken(String message, String username, String fullName, String userID, String hisId, String userImage) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(User.USERKEY).child(hisId);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(User.USERKEY);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String token = snapshot.child("token").getValue().toString();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    if (!snapshot1.getKey().trim().toString().equals(firebaseUser.getUid()) && memberIds.contains(snapshot1.getKey())) {
+                        String token = snapshot1.child("token").getValue().toString();
+
+                        JSONObject to = new JSONObject();
+                        JSONObject data = new JSONObject();
+                        try {
+                            data.put("title", receiverUser.getUsername());
+                            data.put("fullname", fullName);
+                            data.put("username", receiverUser.getUsername());
+                            data.put("message", message);
+                            data.put("hisID", receiverUser.getId());
+                            data.put("senderId", userID);
+                            data.put("hisImage", userImage);
+                            data.put("type", "groupChat");
 
 
-                JSONObject to = new JSONObject();
-                JSONObject data = new JSONObject();
-                try {
-                    data.put("title", username);
-                    data.put("fullname", fullName);
-                    data.put("username", username);
-                    data.put("message", message);
-                    data.put("hisID", userID);
-                    data.put("hisImage", userImage);
-                    data.put("type", "normal");
+                            to.put("to", token);
+                            to.put("data", data);
 
+                            sendNotification(to);
 
-                    to.put("to", token);
-                    to.put("data", data);
-
-                    sendNotification(to);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
+
             }
 
             @Override
@@ -329,7 +339,7 @@ public class ChatScreenActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
 
                 Map<String, String> map = new HashMap<>();
-                map.put("Authorization", "key=" + "AAAAlCYKR9Q:APA91bFogM0PXenfS8CZD8x8nNdgrZ0HAWagF87GRp_GTlER7FBUg1-dYb_sDjSCX2ABwTS4jOUEnbhAnxWW9K7yUi97sopHEiyhOuhNTgZdclzH3cdEkJJQudZjtwkST8FY3MHttnZx");
+                map.put("Authorization", "key=" + "AAAAlCYKR9Q:APA91bH2SKeUtj4W-YufP1GvH74R3yYlGr7ySaz75sDurAZYmduOTu8BVL_R0VMlamkZyMEDeHKaoD6mEwLCAOCOwL9yKJPPINqUPNn9Lwytv3of6x4x0jGy7GmZCFbDlpdm_ftQ2gQn");
                 map.put("Content-Type", "application/json");
                 return map;
             }
@@ -358,8 +368,38 @@ public class ChatScreenActivity extends AppCompatActivity {
 
     private void loadReceiverDetails() {
         receiverUser = (User) getIntent().getSerializableExtra(User.USERKEY);
-        activityChatScreenBinding.textName.setText(receiverUser.getFullname());
+        activityGroupChatScreenBinding.groupName.setText(receiverUser.getUsername());
+        reference = FirebaseDatabase.getInstance().getReference().child("GroupChats").child(receiverUser.getId()).child("members");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                receiverUser.setBio("" + snapshot.getChildrenCount());
+                activityGroupChatScreenBinding.numberOfMember.setText(receiverUser.getBio() + " members");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                System.out.println(error);
+            }
+        });
+
+        reference = FirebaseDatabase.getInstance().getReference().child("GroupChats").child(receiverUser.getId());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                activityGroupChatScreenBinding.groupName.setText(snapshot.child("groupName").getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        activityGroupChatScreenBinding.numberOfMember.setText(receiverUser.getBio() + " members");
     }
+
 
     private void uploadImage() {
 
@@ -392,7 +432,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                         String postid = reference.push().getKey();
                         String key = reference.push().getKey();
                         HashMap<String, Object> message = new HashMap<>();
-                        message.put("id", key);
+                        message.put("id", key + "group");
                         message.put("senderId", firebaseUser.getUid());
                         message.put("receiverId", receiverUser.getId());
                         message.put("message", myUrl);
@@ -415,25 +455,25 @@ public class ChatScreenActivity extends AppCompatActivity {
                             conversion.put(ChatMessage.DATETIMEKEY, new Date());
                             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(ChatMessage.KEY_COLLECTION_CONVERSATION);
                             conversationId = reference1.push().getKey();
-                            reference1.child(conversationId).setValue(conversion);
+                            reference1.child(conversationId + "group").setValue(conversion);
                             if (chatAdapter.conversionID == null)
                                 chatAdapter.conversionID = conversationId;
-                            chatAdapter.lastConversion = activityChatScreenBinding.inputMessage.getText().toString();
+                            chatAdapter.lastConversion = activityGroupChatScreenBinding.inputMessage.getText().toString();
 
 
                         }
-                        activityChatScreenBinding.inputMessage.setText(null);
+                        activityGroupChatScreenBinding.inputMessage.setText(null);
 
                         progressDialog.dismiss();
 
                     } else {
-                        Toast.makeText(ChatScreenActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupChatScreenActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(ChatScreenActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupChatScreenActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -451,7 +491,7 @@ public class ChatScreenActivity extends AppCompatActivity {
 
 
     private void setListeners() {
-        activityChatScreenBinding.imageBack.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isNotification==1){
@@ -464,7 +504,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                 }
             }
         });
-        activityChatScreenBinding.layoutSend.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.layoutSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendMessage();
@@ -472,20 +512,20 @@ public class ChatScreenActivity extends AppCompatActivity {
         });
 
 
-        activityChatScreenBinding.camera.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String[] listPermission = new String[1];
                 listPermission[0] = (Manifest.permission.CAMERA);
                 if (ContextCompat.checkSelfPermission(
-                        ChatScreenActivity.this,
+                        GroupChatScreenActivity.this,
                         Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 ) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intent, CAMERA_REQUEST_CODE);
                 } else {
                     ActivityCompat.requestPermissions(
-                            ChatScreenActivity.this,
+                            GroupChatScreenActivity.this,
                             listPermission,
                             CAMERA_PERMISSION_CODE
                     );
@@ -494,7 +534,7 @@ public class ChatScreenActivity extends AppCompatActivity {
 
             }
         });
-        activityChatScreenBinding.sendImage.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.sendImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent iGallery = new Intent(Intent.ACTION_PICK);
@@ -504,45 +544,45 @@ public class ChatScreenActivity extends AppCompatActivity {
             }
         });
 
-        activityChatScreenBinding.cancelSendImage.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.cancelSendImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activityChatScreenBinding.layoutSend.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.layoutSendImage.setVisibility(View.GONE);
-                activityChatScreenBinding.imageReviewLayout.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.layoutSend.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.layoutSendImage.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.imageReviewLayout.setVisibility(View.GONE);
             }
         });
-        activityChatScreenBinding.layoutSendImage.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.layoutSendImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadImage();
-                activityChatScreenBinding.layoutSend.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.layoutSendImage.setVisibility(View.GONE);
-                activityChatScreenBinding.imageReviewLayout.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.layoutSend.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.layoutSendImage.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.imageReviewLayout.setVisibility(View.GONE);
             }
         });
-        activityChatScreenBinding.recordButton.setRecordView(activityChatScreenBinding.recordView);
-        activityChatScreenBinding.recordButton.setListenForRecord(false);
-        activityChatScreenBinding.recordButton.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.recordButton.setRecordView(activityGroupChatScreenBinding.recordView);
+        activityGroupChatScreenBinding.recordButton.setListenForRecord(false);
+        activityGroupChatScreenBinding.recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String[] listPermission = new String[1];
                 listPermission[0] = (Manifest.permission.RECORD_AUDIO);
                 if (ContextCompat.checkSelfPermission(
-                        ChatScreenActivity.this,
+                        GroupChatScreenActivity.this,
                         Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
                 ) {
-                    activityChatScreenBinding.recordButton.setListenForRecord(true);
+                    activityGroupChatScreenBinding.recordButton.setListenForRecord(true);
                 } else {
                     ActivityCompat.requestPermissions(
-                            ChatScreenActivity.this,
+                            GroupChatScreenActivity.this,
                             listPermission,
                             AUDIO_PERMISSION_CODE
                     );
                 }
             }
         });
-        activityChatScreenBinding.recordView.setOnRecordListener(new OnRecordListener() {
+        activityGroupChatScreenBinding.recordView.setOnRecordListener(new OnRecordListener() {
             @Override
             public void onStart() {
                 //Start Recording..
@@ -554,10 +594,10 @@ public class ChatScreenActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                activityChatScreenBinding.inputMessage.setVisibility(View.INVISIBLE);
-                activityChatScreenBinding.sendImage.setVisibility(View.INVISIBLE);
-                activityChatScreenBinding.camera.setVisibility(View.INVISIBLE);
-                activityChatScreenBinding.recordView.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.inputMessage.setVisibility(View.INVISIBLE);
+                activityGroupChatScreenBinding.sendImage.setVisibility(View.INVISIBLE);
+                activityGroupChatScreenBinding.camera.setVisibility(View.INVISIBLE);
+                activityGroupChatScreenBinding.recordView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -570,10 +610,10 @@ public class ChatScreenActivity extends AppCompatActivity {
                 if (file.exists())
                     file.delete();
 
-                activityChatScreenBinding.inputMessage.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.sendImage.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.camera.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.recordView.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.inputMessage.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.sendImage.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.camera.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.recordView.setVisibility(View.GONE);
             }
 
             @Override
@@ -588,10 +628,10 @@ public class ChatScreenActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                activityChatScreenBinding.inputMessage.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.sendImage.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.camera.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.recordView.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.inputMessage.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.sendImage.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.camera.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.recordView.setVisibility(View.GONE);
 
                 sendRecordingMessage(audioPath);
             }
@@ -608,8 +648,8 @@ public class ChatScreenActivity extends AppCompatActivity {
                 if (file.exists())
                     file.delete();
 
-                activityChatScreenBinding.inputMessage.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.recordView.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.inputMessage.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.recordView.setVisibility(View.GONE);
 
             }
 
@@ -620,121 +660,21 @@ public class ChatScreenActivity extends AppCompatActivity {
             }
 
         });
-        activityChatScreenBinding.voiceCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                if (receiverUser==null){
-//                  loadReceiverDetails();
-//                }
-                Intent intent = new Intent(getApplicationContext(), CallActivity.class);
-                intent.putExtra("to", receiverUser.getUsername().trim());
-                intent.putExtra("isInComingCall", false);
-                startActivity(intent);
-//               initStringeeConnection();
-            }
-        });
-        activityChatScreenBinding.videoCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), videoCallActivity.class);
-                intent.putExtra("to", receiverUser.getUsername().trim());
-                intent.putExtra("isInComingCall", false);
-                startActivity(intent);
-                // initStringeeConnection();
 
-            }
-        });
-        activityChatScreenBinding.moreInfo.setOnClickListener(new View.OnClickListener() {
+        activityGroupChatScreenBinding.moreInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), ImageSentGalleryActivity.class);
+                Intent i = new Intent(getApplicationContext(), GroupInformationActivity.class);
                 i.putExtra("interacter", receiverUser.getId());
                 i.putExtra("interacterImage", receiverUser.getImageurl());
-                i.putExtra("interacterFullName", receiverUser.getFullname());
+                i.putExtra("interacterFullName", receiverUser.getUsername());
+                i.putExtra("conversationId", receiverUser.getEmail());
+
                 startActivity(i);
             }
         });
 
     }
-
-//    public void initStringeeConnection() {
-//        client=new StringeeClient(this);
-//        client.setConnectionListener(new StringeeConnectionListener() {
-//            @Override
-//            public void onConnectionConnected(StringeeClient stringeeClient, boolean b) {
-//                runOnUiThread(() -> {
-//                    FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<String> task) {
-//                            if (task.isSuccessful()){
-//                                String deviceToken= task.getResult();
-//                                client.registerPushToken(deviceToken, new StatusListener() {
-//                                    @Override
-//                                    public void onSuccess() {
-//                                        android.util.Log.d("SampleCall","register push success");
-//                                    }
-//                                });
-//                            }
-//                        }
-//                    });
-//                });
-//
-//            }
-//
-//            @Override
-//            public void onConnectionDisconnected(StringeeClient stringeeClient, boolean b) {
-//                runOnUiThread(()->{
-//                    Toast.makeText(ChatScreenActivity.this, "The connection is disconnected", Toast.LENGTH_SHORT).show();
-//                });
-//            }
-//
-//            @Override
-//            public void onIncomingCall(StringeeCall stringeeCall) {
-//                runOnUiThread(() -> {
-//                    callMap.put(stringeeCall.getCallId(),stringeeCall);
-//                    Intent intent=new Intent(ChatScreenActivity.this, CallActivity.class);
-//                    intent.putExtra("callId",stringeeCall.getCallId());
-//                    intent.putExtra("isInComingCall",true);
-//                    startActivity(intent);
-//                });
-//            }
-//
-//            @Override
-//            public void onIncomingCall2(StringeeCall2 stringeeCall2) {
-//                runOnUiThread(() -> {
-//                    videocallMap.put(stringeeCall2.getCallId(),stringeeCall2);
-//                    Intent intent=new Intent(ChatScreenActivity.this, videoCallActivity.class);
-//                    intent.putExtra("callId",stringeeCall2.getCallId());
-//                    intent.putExtra("isInComingCall",true);
-//                    startActivity(intent);
-//                });
-//            }
-//
-//            @Override
-//            public void onConnectionError(StringeeClient stringeeClient, StringeeError stringeeError) {
-//                runOnUiThread(()->{
-//                    Toast.makeText(ChatScreenActivity.this, stringeeError.getMessage(), Toast.LENGTH_SHORT).show();
-//                });
-//            }
-//
-//            @Override
-//            public void onRequestNewToken(StringeeClient stringeeClient) {
-//
-//            }
-//
-//            @Override
-//            public void onCustomMessage(String s, JSONObject jsonObject) {
-//
-//            }
-//
-//            @Override
-//            public void onTopicMessage(String s, JSONObject jsonObject) {
-//
-//            }
-//        });
-//        client.connect(token);
-//    }
-
 
     private void setUpRecording() {
         mediaRecorder = new MediaRecorder();
@@ -743,10 +683,6 @@ public class ChatScreenActivity extends AppCompatActivity {
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         File folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-//        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "friendverse/Media/Recording");
-//            boolean a;
-//        if (!file.exists())
-//            a= file.mkdirs();
         audioPath = folder.getAbsolutePath() + File.separator + System.currentTimeMillis() + ".3gp";
 
         mediaRecorder.setOutputFile(audioPath);
@@ -785,7 +721,7 @@ public class ChatScreenActivity extends AppCompatActivity {
                         String key = reference.push().getKey();
 
                         HashMap<String, Object> message = new HashMap<>();
-                        message.put("id", key);
+                        message.put("id", key + "group");
                         message.put("senderId", firebaseUser.getUid());
                         message.put("receiverId", receiverUser.getId());
                         message.put("message", myUrl);
@@ -810,23 +746,23 @@ public class ChatScreenActivity extends AppCompatActivity {
                             conversationId = reference1.push().getKey();
                             if (chatAdapter.conversionID == null)
                                 chatAdapter.conversionID = conversationId;
-                            chatAdapter.lastConversion = activityChatScreenBinding.inputMessage.getText().toString();
+                            chatAdapter.lastConversion = activityGroupChatScreenBinding.inputMessage.getText().toString();
 
-                            reference1.child(conversationId).setValue(conversion);
+                            reference1.child(conversationId + "group").setValue(conversion);
 
                         }
-                        activityChatScreenBinding.inputMessage.setText(null);
+                        activityGroupChatScreenBinding.inputMessage.setText(null);
 
                         progressDialog.dismiss();
 
                     } else {
-                        Toast.makeText(ChatScreenActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupChatScreenActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(ChatScreenActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupChatScreenActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -853,11 +789,11 @@ public class ChatScreenActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == GALLERY_REQ_CODE) {
                 imageUri = data.getData();
-                activityChatScreenBinding.imageReview.setImageURI(imageUri);
-                activityChatScreenBinding.imageReviewLayout.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.imageReview.setImageURI(imageUri);
+                activityGroupChatScreenBinding.imageReviewLayout.setVisibility(View.VISIBLE);
 
-                activityChatScreenBinding.layoutSendImage.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.layoutSend.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.layoutSendImage.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.layoutSend.setVisibility(View.GONE);
             }
             if (requestCode == CAMERA_REQUEST_CODE) {
                 Bitmap image = (Bitmap) data.getExtras().get("data");
@@ -870,12 +806,12 @@ public class ChatScreenActivity extends AppCompatActivity {
                 ).copy(Bitmap.Config.RGB_565, true));
 
                 Bitmap bn = result1.get();
-                imageUri = saveImage(bn, ChatScreenActivity.this);
-                activityChatScreenBinding.imageReview.setImageURI(imageUri);
-                activityChatScreenBinding.imageReviewLayout.setVisibility(View.VISIBLE);
+                imageUri = saveImage(bn, GroupChatScreenActivity.this);
+                activityGroupChatScreenBinding.imageReview.setImageURI(imageUri);
+                activityGroupChatScreenBinding.imageReviewLayout.setVisibility(View.VISIBLE);
 
-                activityChatScreenBinding.layoutSendImage.setVisibility(View.VISIBLE);
-                activityChatScreenBinding.layoutSend.setVisibility(View.GONE);
+                activityGroupChatScreenBinding.layoutSendImage.setVisibility(View.VISIBLE);
+                activityGroupChatScreenBinding.layoutSend.setVisibility(View.GONE);
             }
 
         }
@@ -905,5 +841,6 @@ public class ChatScreenActivity extends AppCompatActivity {
     private String getDateTime(Date date) {
         return new SimpleDateFormat("MMMM dd,yyyy - hh:mm a", Locale.getDefault()).format(date);
     }
+
 
 }

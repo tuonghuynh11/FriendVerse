@@ -42,7 +42,6 @@ public class FollowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow);
-        Objects.requireNonNull(getSupportActionBar()).hide();
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
 
@@ -56,7 +55,7 @@ public class FollowActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         userList = new ArrayList<>();
-        userAdapter = new UserAdapter(this, userList, false);
+        userAdapter = new UserAdapter(this, userList);
         recyclerView.setAdapter(userAdapter);
 
         idList = new ArrayList<>();

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login.LoginActivity">
+    tools:context=".Login.LoginActivity"
+    android:background="@drawable/gradient_background">
 
 
     <TextView
@@ -62,7 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button"
@@ -75,6 +76,7 @@
         android:text="LOGIN"
         android:textColor="@color/white"
         android:textSize="23sp"
+        app:layout_constraintVertical_bias="0.3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.507"
@@ -113,7 +115,7 @@
         android:id="@+id/googleButton"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:backgroundTint="#ffffff"
+        android:backgroundTint="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/google_logo"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -127,12 +129,12 @@
         android:id="@+id/phoneLoginButton"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:backgroundTint="#ffffff"
+        android:backgroundTint="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/logo_phone_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.716"
+        app:layout_constraintHorizontal_bias="0.676"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.155" />

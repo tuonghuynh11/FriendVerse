@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -181,6 +182,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                             }
                                         });
 
+                                        initTokenCall();
                                     }
                                 }
 
@@ -226,6 +228,8 @@ public class PhoneConfirmActivity extends AppCompatActivity {
 
                                             }
                                         });
+
+                                        initTokenCall();
 
                                     }
                                 }
@@ -350,4 +354,20 @@ public class PhoneConfirmActivity extends AppCompatActivity {
 //            }
 //        });
 //    }
+    public void initTokenCall() {
+        runOnUiThread(() -> {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                @Override
+                public void onComplete(@NonNull Task<String> task) {
+                    if (task.isSuccessful()) {
+                        String deviceToken = task.getResult();
+
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+                        reference.child(User.TOKENKEY).setValue(deviceToken);
+                    }
+                }
+            });
+        });
+
+    }
 }
