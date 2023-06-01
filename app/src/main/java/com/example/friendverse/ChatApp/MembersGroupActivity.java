@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.friendverse.Adapter.UsersChatAdapter;
+import com.example.friendverse.Fragment.ProfileFragment;
+import com.example.friendverse.MainActivity;
 import com.example.friendverse.Model.ChatMessage;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
@@ -141,8 +143,16 @@ public class MembersGroupActivity extends AppCompatActivity implements UserListe
         bottomSheetView.findViewById(R.id.viewProfile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle =new Bundle();
+                bundle.putString("profileid",user.getId());
 
-                //Thêm sau
+
+                MainActivity mainActivity =new MainActivity();
+                mainActivity.selectedFragment =new ProfileFragment();
+                mainActivity.selectedFragment .setArguments(bundle);
+                Intent i =new Intent(getApplicationContext(), mainActivity.getClass());
+                i.putExtra("profileid",user.getId());
+                startActivity(i);
                 bottomSheetDialog.cancel();
             }
         });

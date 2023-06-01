@@ -35,6 +35,7 @@
                     android:layout_marginRight="40dp"
                     android:src="@drawable/ic_inbox" />
                 <ImageView
+                    android:id="@+id/chatButton"
                     android:layout_width="20dp"
                     android:layout_height="25dp"
                     android:layout_alignParentEnd="true"
