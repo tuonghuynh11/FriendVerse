@@ -45,7 +45,7 @@
         android:layout_centerVertical="true"
         android:text = "Follow"
         android:background="@drawable/rounded_button"
-        android:textColor="@color/colorPrimary">
+        android:textColor="#FFFFFF">
 
     </Button>
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 
 import android.widget.ShareActionProvider;
@@ -17,8 +18,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -45,12 +49,22 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.ViewHolder>{
     private Context sContext;
     private List<User> sUser;
     private boolean isFragment;
+    private int limit = 5;
     private FirebaseUser firebaseUser;
+    private OnItemClickListener onItemClickListener;
     public UserAdapter(Context sContext, List<User> sUser) {
         this.sContext = sContext;
         this.sUser = sUser;
 
     }
+    public interface OnItemClickListener {
+        void onItemClick(User user);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        onItemClickListener = listener;
+    }
+
 
     @NonNull
     @Override
@@ -75,6 +89,9 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
         if (user.getId().equals(firebaseUser.getUid())){
             holder.btnFollow.setVisibility(View.GONE);
+            holder.imageProfile.setVisibility(View.GONE);
+            holder.username.setVisibility(View.GONE);
+            holder.fullname.setVisibility(View.GONE);
         }
 
         holder.btnFollow.setOnClickListener(new View.OnClickListener() {
@@ -101,15 +118,14 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.ViewHolder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isFragment) {
-                    sContext.getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().putString("profileId", user.getId()).apply();
-
-                    ((FragmentActivity)sContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
-                } else {
-                    Intent intent = new Intent(sContext, MainActivity.class);
-                    intent.putExtra("publisherId", user.getId());
-                    sContext.startActivity(intent);
-                }
+                Bundle passData = new Bundle();
+                passData.putString("profileid", user.getId());
+                Fragment editFragment = new ProfileFragment();
+                editFragment.setArguments(passData);
+                FragmentManager fragmentManager = ((AppCompatActivity)sContext).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, editFragment).addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 
@@ -144,8 +160,13 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return sUser.size();
+        if (sUser.size() > limit) {
+            return limit;
+        } else {
+            return sUser.size();
+        }
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public CircleImageView imageProfile;
@@ -160,6 +181,18 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.ViewHolder>{
             username = itemView.findViewById(R.id.username);
             fullname = itemView.findViewById(R.id.fullname);
             btnFollow = itemView.findViewById(R.id.btn_follow);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            User user = sUser.get(position);
+                            onItemClickListener.onItemClick(user);
+                        }
+                    }
+                }
+            });
         }
     }
     private void addNotification(String userId) {
