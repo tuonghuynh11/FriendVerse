@@ -194,7 +194,8 @@
                     android:text="Edit Profile"
                     android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:background="@drawable/button_background"/>
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_background_blue"/>
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

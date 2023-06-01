@@ -48,7 +48,6 @@
         android:text = "Follow"
         android:background="@drawable/rounded_button"
         android:textColor="@color/white">
-
     </Button>
 
 </RelativeLayout>
