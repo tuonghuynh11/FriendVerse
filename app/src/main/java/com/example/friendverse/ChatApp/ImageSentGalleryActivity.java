@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +36,7 @@ public class ImageSentGalleryActivity extends AppCompatActivity {
     private User currentUser;
     private String receiverId;
     private String receiverImage;
+    private String receiverFullName;
     private ImageButton back;
     private RoundedImageView goToProfileUserBtn;
     private RecyclerView imageSentRecyclerViews;
@@ -66,6 +68,12 @@ public class ImageSentGalleryActivity extends AppCompatActivity {
                 if (i.getStringExtra("interacterImage")!=null){
                     receiverImage=i.getStringExtra("interacterImage");
                 }
+                if (i.getStringExtra("interacterFullName")!=null){
+                    receiverFullName=i.getStringExtra("interacterFullName");
+                }
+
+                TextView name = findViewById(R.id.userNameTextView);
+                name.setText(receiverFullName);
                 Glide.with(this).load(receiverImage).into(goToProfileUserBtn);
                 reference = FirebaseDatabase.getInstance().getReference().child("Chats");
                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
