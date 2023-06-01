@@ -61,7 +61,9 @@
                 android:layout_height="0dp"
                 android:src="@drawable/img_1"
                 app:layout_constraintDimensionRatio="1:1"
-                tools:ignore="MissingConstraints" />
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

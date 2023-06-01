@@ -1,11 +1,15 @@
 package com.example.friendverse.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +22,9 @@ import com.example.friendverse.Fragment.PostDetailFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
+import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,7 +39,6 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
-
     private Context mContext;
     private List<Post> mPosts;
 
@@ -185,6 +190,74 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
             }
         });
 
+        holder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View root) {
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+                        root.getContext(), R.style.BottomSheetDialogTheme
+                );
+                View bottomSheetView = LayoutInflater.from(root.getContext()).inflate
+                        (
+                                R.layout.layout_bottom_post_menu_sheet,
+                                (LinearLayout)root.findViewById(R.id.bottomSheetContainer)
+                        );
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child(post.getPostid()).child("publisher").equals(firebaseUser.getUid())) {
+                            bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.VISIBLE);
+                            bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
+                            bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.GONE);
+                            bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
+                            bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d("TAG", error.getMessage());
+                    }
+                });
+                bottomSheetView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    }
+                });
+                bottomSheetView.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPostid()).removeValue();
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        break;
+                                }
+                            }
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    }
+                });
+                bottomSheetView.findViewById(R.id.report).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    }
+                });
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+            }
+        });
     }
 
     @Override
@@ -224,6 +297,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
             description = itemView.findViewById(R.id.description);
 
         }
+    }
+
+    private void checkPost(final String postId) {
+
     }
 
     private void isSaved (final String postId, final ImageView image) {

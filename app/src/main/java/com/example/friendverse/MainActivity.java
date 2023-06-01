@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
                     new ProfileFragment()).commit();
         }
         else {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                    new HomeFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new HomeFragment()).commit();
         }
     }
 
