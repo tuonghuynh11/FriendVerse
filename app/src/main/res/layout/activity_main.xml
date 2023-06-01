@@ -25,7 +25,7 @@
             app:itemIconTint="@color/design_default_color_primary"
             app:itemIconSize="28dip"
             app:labelVisibilityMode="unlabeled"
-            android:background="?android:attr/windowBackground"
+            android:background="@color/cardview_light_background"
             app:menu="@menu/bottom_navigation"/>
     </com.google.android.material.appbar.AppBarLayout>
     

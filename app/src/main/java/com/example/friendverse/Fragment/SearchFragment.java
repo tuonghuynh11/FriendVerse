@@ -97,7 +97,6 @@ public class SearchFragment extends Fragment {
         userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(User user) {
-
                 Bundle bundle = new Bundle();
                 bundle.putString("userId", user.getId());
                 ProfileFragment profileFragment = new ProfileFragment();
@@ -108,9 +107,7 @@ public class SearchFragment extends Fragment {
                         .commit();
             }
         });
-
         return view;
-
     }
     private void filter(String text) {
 
@@ -179,7 +176,6 @@ public class SearchFragment extends Fragment {
 
             }
         });
-
     }
 
 
@@ -195,7 +191,6 @@ public class SearchFragment extends Fragment {
                         User user = snapshot.getValue(User.class);
                         mUsers.add(user);
                     }
-
                     userAdapter.notifyDataSetChanged();
                 }
             }

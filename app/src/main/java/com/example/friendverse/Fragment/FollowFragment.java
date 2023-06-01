@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.friendverse.Adapter.UserAdapter;
+import com.example.friendverse.Adapter.UserProfileAdapter;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
 import com.google.firebase.database.DataSnapshot;
@@ -40,7 +41,7 @@ public class FollowFragment extends Fragment {
     private List<String> idList;
 
     RecyclerView recyclerView;
-    UserAdapter userAdapter;
+    UserProfileAdapter userAdapter;
     List<User> userList;
 
     Context context;
@@ -69,7 +70,7 @@ public class FollowFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         userList = new ArrayList<>();
-        userAdapter = new UserAdapter(context, userList);
+        userAdapter = new UserProfileAdapter(context, userList);
         recyclerView.setAdapter(userAdapter);
 
         idList = new ArrayList<>();

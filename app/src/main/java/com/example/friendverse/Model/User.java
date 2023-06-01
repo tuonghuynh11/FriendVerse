@@ -35,12 +35,20 @@ public class User implements Serializable {
 
     private boolean isSelected= false;
 
+    public boolean isBan() {
+        return isBan;
+    }
 
+    public void setBan(boolean ban) {
+        isBan = ban;
+    }
+
+    private boolean isBan;
     public User() {
     }
 
 
-    public User(String id, String username, String fullname, String imageurl, String bio,String email, int activity, String tokenCall,String token, String website, String phonenumber) {
+    public User(String id, String username, String fullname, String imageurl, String bio,String email, int activity, boolean ban, String tokenCall,String token, String website, String phonenumber) {
 
         this.id = id;
         this.username = username;
@@ -51,7 +59,7 @@ public class User implements Serializable {
         this.activity=activity;
         this.tokenCall=tokenCall;
         this.token=token;
-
+        this.isBan = ban;
         this.website = website;
         this.phonenumber = phonenumber;
 

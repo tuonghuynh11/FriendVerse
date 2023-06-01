@@ -40,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +65,7 @@ public class ProfileFragment extends Fragment {
 
     ImageButton my_photos, saved_photos;
     View root;
-
+    static BottomSheetDialog bottomSheetDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -155,11 +156,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
+
         options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                startActivity(new Intent(getContext(), SettingActivity.class));
-                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+                bottomSheetDialog = new BottomSheetDialog(
                         root.getContext(), R.style.BottomSheetDialogTheme
                 );
                 View bottomSheetView = LayoutInflater.from(root.getContext()).inflate
@@ -170,15 +173,20 @@ public class ProfileFragment extends Fragment {
                 bottomSheetView.findViewById(R.id.setting).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(getContext(), SettingActivity.class);
-                        startActivity(intent);
+                        bottomSheetDialog.cancel();
+                        Fragment settingFragment = new SettingFragment();
+                        FragmentManager fragmentManager = getParentFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, settingFragment).addToBackStack(null);
+                        fragmentTransaction.commit();
                     }
                 });
                 bottomSheetDialog.setContentView(bottomSheetView);
                 bottomSheetDialog.show();
-
             }
         });
+
+
 
         my_photos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,7 +260,12 @@ public class ProfileFragment extends Fragment {
                 }
                 User user = new User();
                 user = snapshot.getValue(User.class);
-                Glide.with(root.getContext()).load(user.getImageurl()).into(image_profile);
+                String img = user.getImageurl();
+                if (img == null) {
+                    img = "https://play-lh.googleusercontent.com/iT_u15GsNd9BOPu_6vuUgL4t2-f0BZDGHO4ZaFqJ1ynKYs1j7TAu7P7IxK77EBh0cghQ";
+                }
+                //Glide.with(root.getContext()).load(img).into(image_profile);
+                Picasso.get().load(img).into(image_profile);
                 username.setText(user.getUsername());
                 fullname.setText(user.getFullname());
                 bio.setText(user.getBio());

@@ -33,15 +33,14 @@
                     android:src="@drawable/ic_search"
                     android:id="@+id/iv_search"
                     android:layout_centerVertical="true"/>
-                <EditText
+                <com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/search_bar"
+                    android:layout_toRightOf="@id/iv_search"
                     android:background="@android:color/transparent"
-                    android:hint="Search"
-                    android:textSize="24dp"
-                    android:layout_toRightOf="@+id/iv_search"
-                    android:layout_marginStart="2dp"/>
+                    android:hint="Search..."
+                    android:layout_marginStart="15dp" />
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
