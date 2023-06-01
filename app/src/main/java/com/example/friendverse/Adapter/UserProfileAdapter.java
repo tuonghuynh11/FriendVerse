@@ -11,11 +11,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.friendverse.Fragment.EditProfileFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.MainActivity;
 import com.example.friendverse.Model.User;
@@ -36,20 +40,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.ImageViewHolder> {
     private Context context;
     private List<User> users;
-    private boolean isFragment;
 
     private FirebaseUser firebaseUser;
 
-    public UserProfileAdapter(Context context, List<User> users, boolean isFragment){
+    public UserProfileAdapter(Context context, List<User> users){
         this.context = context;
         this.users = users;
-        this.isFragment = isFragment;
     }
 
     @NonNull
     @Override
     public UserProfileAdapter.ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.user_item_list, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.user_item, parent, false);
         return new UserProfileAdapter.ImageViewHolder(view);
     }
 
@@ -74,18 +76,25 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isFragment) {
-                    Bundle passData = new Bundle();
-                    passData.putString("profileid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    Fragment newFragment = new ProfileFragment();
-                    newFragment.setArguments(passData);
-                    ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                            newFragment).commit();
-                } else {
-                    Intent intent = new Intent(context, MainActivity.class);
-                    intent.putExtra("publisherid", user.getId());
-                    context.startActivity(intent);
-                }
+//                if (isFragment) {
+//                    Bundle passData = new Bundle();
+//                    passData.putString("profileid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+//                    Fragment newFragment = new ProfileFragment();
+//                    newFragment.setArguments(passData);
+//                    ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                            newFragment).commit();
+//                } else {
+//                    Intent intent = new Intent(context, MainActivity.class);
+//                    intent.putExtra("publisherid", user.getId());
+//                    context.startActivity(intent);
+//                }
+//                Bundle bundle = new Bundle();
+//                bundle.putString("id", holder.id);
+//                Fragment editFragment = new ProfileFragment();
+//                FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                fragmentTransaction.replace(R.id.fragment_container, editFragment).addToBackStack(null);
+//                fragmentTransaction.commit();
             }
         });
 

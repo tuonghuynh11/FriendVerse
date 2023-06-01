@@ -16,15 +16,30 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:maxLines="1"
-                    android:id="@+id/username"
-                    android:textColor="@color/black"/>
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_close"
+                        android:id="@+id/close"
+                        android:layout_weight="1"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="20dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:id="@+id/username"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

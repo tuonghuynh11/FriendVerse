@@ -2,6 +2,7 @@ package com.example.friendverse.Adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,16 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
+
+
+import com.bumptech.glide.Glide;
+import com.example.friendverse.CommentActivity;
+import com.example.friendverse.Fragment.PostDetailFragment;
+import com.example.friendverse.Fragment.ProfileFragment;
+import com.example.friendverse.Model.Post;
+import com.example.friendverse.Model.User;
+import com.example.friendverse.R;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,35 +38,31 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import com.hendraanggrian.appcompat.widget.SocialTextView;
 import com.example.friendverse.CommentActivity;
 //import com.example.friendverse.FollowersActivity;
-import com.example.friendverse.Fragment.PostDetailFragment;
-import com.example.friendverse.Fragment.ProfileFragment;
-import com.example.friendverse.Model.Post;
-import com.example.friendverse.Model.User;
-import com.example.friendverse.R;
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import com.squareup.picasso.Picasso;
+import java.util.HashMap;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-
-    public Context mContext;
-    public List<Post> mPost;
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
+    private Context mContext;
+    private List<Post> mPosts;
 
     private FirebaseUser firebaseUser;
 
-    public PostAdapter(Context mContext, List<Post> mPost) {
+    public PostAdapter(Context mContext, List<Post> mPosts) {
         this.mContext = mContext;
-        this.mPost = mPost;
+        this.mPosts = mPosts;
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     }
 
     @NonNull
     @Override
+
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_item , parent , false);
@@ -222,8 +229,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mPost.size();
+        return mPosts.size();
     }
+
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -242,8 +250,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public SocialTextView description;
         public TextView comments;
 
-        public ViewHolder(@NonNull View itemView) {
+        public Viewholder(@NonNull View itemView) {
             super(itemView);
+
 
             share = itemView.findViewById(R.id.share);
             image_profile = itemView.findViewById(R.id.image_profile);
@@ -252,6 +261,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             comment = itemView.findViewById(R.id.comment);
             save = itemView.findViewById(R.id.save);
             more = itemView.findViewById(R.id.more);
+
             videoView = itemView.findViewById(R.id.videoView);
             username = itemView.findViewById(R.id.username);
             likes = itemView.findViewById(R.id.no_of_likes);
@@ -277,17 +287,40 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
+        }
     }
+
 
     private void isLikes (String postid , final ImageView imageView) {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Likes").child(postid);
 
-        reference.addValueEventListener(new ValueEventListener() {
+    private void isSaved (final String postId, final ImageView image) {
+        FirebaseDatabase.getInstance().getReference().child("Saves").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(firebaseUser.getUid()).exists()){
+                if (dataSnapshot.child(postId).exists()) {
+                    image.setImageResource(R.drawable.ic_save_black);
+                    image.setTag("saved");
+                } else {
+                    image.setImageResource(R.drawable.ic_save);
+                    image.setTag("save");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void isLiked(String postId, final ImageView imageView) {
+        FirebaseDatabase.getInstance().getReference().child("Likes").child(postId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child(firebaseUser.getUid()).exists()) {
                     imageView.setImageResource(R.drawable.ic_favorite);
                     imageView.setTag("liked");
                 } else {
@@ -301,8 +334,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             }
         });
-
     }
+
+    private void noOfLikes (String postId, final TextView text) {
+        FirebaseDatabase.getInstance().getReference().child("Likes").child(postId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                text.setText(dataSnapshot.getChildrenCount() + " likes");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     private void addNotifications(String userid , String postid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
@@ -428,6 +475,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         });
     }
 
+
     private void sharePostWithFollower(String followerId, Post post) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Shares")
                 .child(followerId)
@@ -456,6 +504,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             }
         });
+
     }
 
 }
