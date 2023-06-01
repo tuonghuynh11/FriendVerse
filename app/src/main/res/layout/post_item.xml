@@ -31,7 +31,7 @@
                 android:layout_height="45dp"
                 android:layout_marginStart="20dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_person"
+
                 app:riv_border_color="#333333"
                 app:riv_border_width="2dip"
                 app:riv_corner_radius="20dp"
@@ -44,7 +44,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
-                android:text="Dinh Dai Duong"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -53,23 +52,36 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/mediaContainer"
+            app:layout_constraintTop_toTopOf="@+id/mediaContainer">
 
             <ImageView
                 android:id="@+id/post_image"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/img_1"
+                android:visibility="gone"
                 app:layout_constraintDimensionRatio="1:1"
                 tools:ignore="MissingConstraints" />
+
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:padding="5dp"
+                android:visibility="gone"
+                app:layout_constraintDimensionRatio="1:1"
+                tools:ignore="MissingConstraints"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <RelativeLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:padding="8dp"
+            android:layout_below="@id/mediaContainer">
 
             <ImageView
                 android:id="@+id/like"
@@ -102,53 +114,46 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/likes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="1m likes"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/publisher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="#yourname"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/viewcomment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:id="@+id/no_of_likes"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:id="@+id/author"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <com.hendraanggrian.appcompat.widget.SocialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Xem tất cả 1000 bình luận"
-            android:textColor="@color/colorAccent"
-            android:textStyle="bold" />
+            android:id="@+id/description"
+            android:textColor="@color/colorPrimaryDark"/>
 
         <TextView
-            android:id="@+id/timepost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="15 tháng 4"
-            android:textColor="@color/colorAccent"
-            android:textSize="15dp"
-            android:textStyle="bold" />
-
-
-        <TextView
-            android:id="@+id/comments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/colorAccent" />
-
+            android:id="@+id/comments"
+            android:textColor="@color/colorAccent"/>
 
     </LinearLayout>
 

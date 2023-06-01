@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.friendverse.Fragment.HomeFragment;
+import com.example.friendverse.Fragment.NotificationFragment;
 import com.example.friendverse.Fragment.NotifyFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Fragment.SearchFragment;
@@ -83,16 +84,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-//        else {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                    new HomeFragment()).commit();
-//        }
+        else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new HomeFragment()).commit();
+        }
     }
 
     private BottomNavigationView.OnItemSelectedListener navigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case id.nav_home:
-//                selectedFragment = new HomeFragment();
+                selectedFragment = new HomeFragment();
                 break;
             case id.nav_search:
                 selectedFragment = new SearchFragment();
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new WatchFragment();
                 break;
             case id.nav_notify:
-                selectedFragment = new NotifyFragment();
+                selectedFragment = new NotificationFragment();
                 break;
             case id.nav_profile:
                 Bundle passData = new Bundle();
