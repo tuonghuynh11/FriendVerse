@@ -40,7 +40,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
@@ -54,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
     private LoadingDialog loadingDialog = new LoadingDialog(this);
     private GoogleSignInClient googleSignInClient;
     private int flag = 0;
+
+    private List<String> banUsersId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-
+        initList();
 
         tvforgetPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +132,25 @@ public class LoginActivity extends AppCompatActivity {
 //
 //            }
 //        });
+    }
+
+    private void initList() {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference().child("Ban").child("Users");
+        reference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                banUsersId = new ArrayList<>();
+                for (DataSnapshot snapshot1: snapshot.getChildren()
+                     ) {
+                    banUsersId.add(snapshot1.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
 
@@ -221,8 +244,18 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
-                        Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
+
                         flag = 0;
+
+                        for (String s: banUsersId
+                             ) {
+                            if(s.equals(mAuth.getCurrentUser().getUid())){
+                                Toast.makeText(LoginActivity.this, "This account is banned", Toast.LENGTH_SHORT).show();
+                                loadingDialog.hideDialog();
+                                FirebaseAuth.getInstance().signOut();
+                                return;
+                            }
+                        }
 
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
                         reference.child(User.ACTIVITYKEY).setValue(1);
@@ -245,7 +278,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
                         loadingDialog.hideDialog();
 
-
+                        Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
@@ -300,9 +333,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (signInAccountTask.isSuccessful()) {
 
-                String s = "Google sign in successful";
 
-                displayToast(s);
 
                 try {
 
@@ -322,9 +353,30 @@ public class LoginActivity extends AppCompatActivity {
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                     String userid = firebaseUser.getUid();
 
+                                    for (String s: banUsersId
+                                    ) {
+                                        if(s.equals(userid)){
+                                            googleSignInClient = GoogleSignIn.getClient(LoginActivity.this, GoogleSignInOptions.DEFAULT_SIGN_IN);
+                                            Toast.makeText(LoginActivity.this, "This account is banned", Toast.LENGTH_SHORT).show();
+                                            loadingDialog.hideDialog();
+                                            FirebaseAuth.getInstance().signOut();
+                                            googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+
+                                                    }
+                                                }
+                                            });
+                                            return;
+                                        }
+                                    }
+
                                     reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
                                     reference.child(User.ACTIVITYKEY).setValue(1);
+                                    String s = "Google sign in successful";
 
+                                    displayToast(s);
                                     reference.addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -356,7 +408,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 HashMap<String, Object> hashMap = new HashMap<>();
                                                 hashMap.put("id", userid);
-                                                hashMap.put("username", "");
+                                                hashMap.put("username", userid);
                                                 hashMap.put("fullname", firebaseUser.getDisplayName());
                                                 hashMap.put("bio", "");
                                                 hashMap.put("imageurl", "default");
@@ -404,7 +456,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 HashMap<String, Object> hashMap = new HashMap<>();
                                                 hashMap.put("id", userid);
-                                                hashMap.put("username", "");
+                                                hashMap.put("username", userid);
                                                 hashMap.put("fullname", firebaseUser.getDisplayName());
                                                 hashMap.put("bio", "");
                                                 hashMap.put("imageurl", "default");

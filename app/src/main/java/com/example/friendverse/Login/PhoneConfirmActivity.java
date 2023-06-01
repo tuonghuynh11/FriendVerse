@@ -35,7 +35,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class PhoneConfirmActivity extends AppCompatActivity {
@@ -49,6 +51,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
     private EditText etOTP;
     private LoadingDialog loadingDialog = new LoadingDialog(this);
     private PhoneAuthProvider.ForceResendingToken mForceResending;
+    private List<String> banUsersId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +68,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
         verificationID = intent1.getExtras().getString("verification_ID");
         phoneNum = intent1.getExtras().getString("phone_number");
 
+        initList();
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,6 +106,24 @@ public class PhoneConfirmActivity extends AppCompatActivity {
             }
         });
     }
+    private void initList() {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference().child("Ban").child("Users");
+        reference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                banUsersId = new ArrayList<>();
+                for (DataSnapshot snapshot1: snapshot.getChildren()
+                ) {
+                    banUsersId.add(snapshot1.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
 
     private FirebaseAuth mAuth;
@@ -128,6 +150,19 @@ public class PhoneConfirmActivity extends AppCompatActivity {
 
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             String userid = firebaseUser.getUid();
+
+                            for (String s: banUsersId
+                            ) {
+                                if(s.equals(userid)){
+                                    Toast.makeText(PhoneConfirmActivity.this, "This account is banned", Toast.LENGTH_SHORT).show();
+                                    loadingDialog.hideDialog();
+                                    FirebaseAuth.getInstance().signOut();
+                                    startActivity(new Intent(PhoneConfirmActivity.this, StartActivity.class));
+                                    finishAffinity();
+                                    return;
+                                }
+                            }
+
 
                             reference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
                             reference.child(User.ACTIVITYKEY).setValue(1);
@@ -163,7 +198,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
 
                                         HashMap<String, Object> hashMap = new HashMap<>();
                                         hashMap.put("id", userid);
-                                        hashMap.put("username", "");
+                                        hashMap.put("username", userid);
                                         hashMap.put("fullname", firebaseUser.getDisplayName());
                                         hashMap.put("bio", "");
                                         hashMap.put("imageurl", "default");
@@ -210,7 +245,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
 
                                         HashMap<String, Object> hashMap = new HashMap<>();
                                         hashMap.put("id", userid);
-                                        hashMap.put("username", "");
+                                        hashMap.put("username", userid);
                                         hashMap.put("fullname", firebaseUser.getDisplayName());
                                         hashMap.put("bio", "");
                                         hashMap.put("imageurl", "default");

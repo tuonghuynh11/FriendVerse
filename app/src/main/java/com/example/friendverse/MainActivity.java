@@ -21,6 +21,7 @@ import com.example.friendverse.Fragment.NotifyFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Fragment.SearchFragment;
 import com.example.friendverse.Fragment.WatchFragment;
+import com.example.friendverse.Login.LoginActivity;
 import com.example.friendverse.Login.StartActivity;
 import com.example.friendverse.Login.StartUpActivity;
 import com.example.friendverse.Model.User;
@@ -132,7 +133,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
-        reference.child(User.ACTIVITYKEY).setValue(0);
+        try {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+            reference.child(User.ACTIVITYKEY).setValue(0);
+        }
+        catch (Exception ex){
+            Log.e("TAG", "User not login");
+        }
     }
 }

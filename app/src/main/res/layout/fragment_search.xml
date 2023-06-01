@@ -28,7 +28,8 @@
                 android:id="@+id/search_bar"
                 android:background="@android:color/transparent"
                 android:hint="Search..."
-                android:layout_marginStart="15dp" />
+                android:layout_marginStart="15dp"
+                android:singleLine="true" />
 
         </androidx.appcompat.widget.Toolbar>
 
