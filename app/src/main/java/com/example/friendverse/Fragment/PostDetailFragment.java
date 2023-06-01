@@ -37,7 +37,7 @@ import java.util.List;
 public class PostDetailFragment extends Fragment {
 
     private MediaController mediaController;
-
+    private ImageView back;
     private String postId;
 
     private RecyclerView recyclerView;
@@ -54,7 +54,7 @@ public class PostDetailFragment extends Fragment {
         if (bundle == null) {
             return null;
         }
-        postid = bundle.getString("postid");
+        postId = bundle.getString("postid");
         back = view.findViewById(R.id.back);
 
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -62,7 +62,7 @@ public class PostDetailFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         postList = new ArrayList<>();
-        postAdapter = new PostAdapter(getContext() , postList);
+        postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
 
         ImageView backButton = view.findViewById(R.id.back);
@@ -73,9 +73,8 @@ public class PostDetailFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.popBackStack();
             }
         });
         FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {
@@ -99,6 +98,6 @@ public class PostDetailFragment extends Fragment {
 
             }
         });
-
+        return view;
     }
 }

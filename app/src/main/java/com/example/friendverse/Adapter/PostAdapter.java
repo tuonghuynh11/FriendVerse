@@ -52,7 +52,7 @@ import java.util.List;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private Context mContext;
     private List<Post> mPosts;
 
@@ -77,9 +77,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        final Post post = mPost.get(position);
+        final Post post = mPosts.get(position);
         if (post.getPostType().equals("image")) {
             holder.post_image.setVisibility(View.VISIBLE);
             holder.videoView.setVisibility(View.GONE);
@@ -92,16 +91,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
             holder.videoView.setVideoURI(videoUri);
             // Implement video playback controls as needed
         }
-
+        /*
         if (post.getDescription().equals("")) {
             holder.description.setVisibility(View.GONE);
         } else {
             holder.description.setVisibility(View.VISIBLE);
             holder.description.setText(post.getDescription());
         }
-
+        */
         publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
-        isLikes(post.getPostid(), holder.like);
+        isLiked(post.getPostid(), holder.like);
         noLikes(holder.likes, post.getPostid());
         getComments(post.getPostid(), holder.comments);
         isSaved(post.getPostid(), holder.save);
@@ -325,7 +324,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
         public SocialTextView description;
         public TextView comments;
 
-        public Viewholder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
 
@@ -361,35 +360,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Viewholder> {
 
             }
         });
-
-        }
     }
-
-
-    private void isLikes (String postid , final ImageView imageView) {
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    private void isSaved (final String postId, final ImageView image) {
-        FirebaseDatabase.getInstance().getReference().child("Saves").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(postId).exists()) {
-                    image.setImageResource(R.drawable.ic_save_black);
-                    image.setTag("saved");
-                } else {
-                    image.setImageResource(R.drawable.ic_save);
-                    image.setTag("save");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     private void isLiked(String postId, final ImageView imageView) {
         FirebaseDatabase.getInstance().getReference().child("Likes").child(postId).addValueEventListener(new ValueEventListener() {
             @Override

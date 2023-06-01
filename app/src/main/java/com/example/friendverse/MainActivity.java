@@ -51,27 +51,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
-
-
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(MainActivity.this, StartActivity.class));
+        }
         setContentView(layout.activity_main);
-//        // auth
-//        auth = FirebaseAuth.getInstance();
-//        String email = "nguyenthaicong265@gmail.com";
-//        String pass = "thaicong";
-//        //
-//        auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(MainActivity.this, task -> {
-//            if (task.isSuccessful()) {
-//                Toast.makeText(MainActivity.this, "Successful", Toast.LENGTH_SHORT).show();
-//                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("User").child(auth.getCurrentUser().getUid());
-//            }
-//            else {
-//                Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        //
 
         bottomNavigationView = findViewById(id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(navigationItemSelectedListener);
+
 
         Bundle intent = getIntent().getExtras();
         if (intent != null){
@@ -83,9 +71,6 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ProfileFragment()).commit();
         }
-
-
-
         else {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new HomeFragment()).commit();
