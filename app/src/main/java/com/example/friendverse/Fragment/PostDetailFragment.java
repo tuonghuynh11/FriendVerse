@@ -50,13 +50,13 @@ public class PostDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post_detail, container, false);
 
-        Bundle bundle = this.getArguments();
-        if (bundle == null) {
-            return null;
-        }
-        postId = bundle.getString("postid");
-        back = view.findViewById(R.id.back);
-
+//        Bundle bundle = this.getArguments();
+//        if (bundle == null) {
+//            return null;
+//        }
+//        postId = bundle.getString("postid");
+//        back = view.findViewById(R.id.back);
+        postId = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("postid", "none");
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -73,8 +73,11 @@ public class PostDetailFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.popBackStack();
+//                FragmentManager fragmentManager = getParentFragmentManager();
+//                fragmentManager.popBackStack();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {

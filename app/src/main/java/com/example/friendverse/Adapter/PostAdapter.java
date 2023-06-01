@@ -3,6 +3,7 @@ package com.example.friendverse.Adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 
+import android.os.Bundle;
 import android.util.Log;
 
 import android.content.DialogInterface;
@@ -16,10 +17,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 
 
@@ -32,7 +35,10 @@ import com.example.friendverse.Model.User;
 import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.friendverse.Profile.FollowActivity;
@@ -86,10 +92,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         } else if (post.getPostType().equals("video")) {
             holder.post_image.setVisibility(View.GONE);
             holder.videoView.setVisibility(View.VISIBLE);
-            // Set video URI to the VideoView
             Uri videoUri = Uri.parse(post.getPostvid());
+            ((AppCompatActivity) mContext).runOnUiThread(()->{holder.videoView.setVideoURI(    Uri.parse(  post.getPostvid()));});
+            holder.videoView.setOnPreparedListener(mediaPlayer -> holder.videoView.start());
             holder.videoView.setVideoURI(videoUri);
-            // Implement video playback controls as needed
+            MediaController vidControl = new MediaController(mContext);
+            vidControl.setAnchorView(holder.videoView);
+            holder.videoView.setMediaController(vidControl);
+            holder.videoView.start();
+
         }
         /*
         if (post.getDescription().equals("")) {
@@ -122,9 +133,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 editor.putString("profileid", post.getPublisher());
                 editor.apply();
 
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
+                Fragment profileFragment = new ProfileFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("profileid", post.getPublisher());
+                profileFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, profileFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
+
         });
 
         holder.username.setOnClickListener(new View.OnClickListener() {
@@ -134,10 +153,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 editor.putString("profileid", post.getPublisher());
                 editor.apply();
 
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
+                Fragment profileFragment = new ProfileFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("profileid", post.getPublisher());
+                profileFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, profileFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
+
         });
+
 
         holder.share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,10 +182,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 editor.putString("profileid", post.getPublisher());
                 editor.apply();
 
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
+                Fragment profileFragment = new ProfileFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("profileid", post.getPublisher());
+                profileFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, profileFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
+
         });
+
 
         holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override
