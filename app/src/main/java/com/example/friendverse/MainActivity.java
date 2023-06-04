@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.friendverse.Fragment.HomeFragment;
@@ -21,6 +22,7 @@ import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Fragment.ReelFragment;
 import com.example.friendverse.Fragment.SearchFragment;
 import com.example.friendverse.Fragment.WatchFragment;
+import com.example.friendverse.Login.LoginActivity;
 import com.example.friendverse.Login.StartActivity;
 import com.example.friendverse.Login.StartUpActivity;
 import com.example.friendverse.Model.User;
@@ -42,7 +44,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
-    Fragment selectedFragment = null;
+    public Fragment selectedFragment = null;
 
 //    // User
     FirebaseAuth auth;
@@ -64,18 +66,25 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle intent = getIntent().getExtras();
         if (intent != null){
-            String publisher = intent.getString("publisherid");
+            String publisher = intent.getString("profileid");
             SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
             editor.putString("profileid", publisher);
             editor.apply();
 
+            Bundle bundle =new Bundle();
+            bundle.putString("profileid",publisher);
+            bundle.putString("isClose","1");
+
+            Fragment fragment =new ProfileFragment();
+            fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new ProfileFragment()).commit();
+                    fragment).commit();
         }
         else {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new HomeFragment()).commit();
         }
+
     }
 
     private BottomNavigationView.OnItemSelectedListener navigationItemSelectedListener = item -> {
@@ -125,7 +134,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
-        reference.child(User.ACTIVITYKEY).setValue(0);
+        try {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+            reference.child(User.ACTIVITYKEY).setValue(0);
+        }
+        catch (Exception ex){
+            Log.e("TAG", "User not login");
+        }
     }
 }

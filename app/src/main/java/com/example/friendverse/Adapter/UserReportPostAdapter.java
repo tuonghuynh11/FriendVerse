@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,10 +15,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.friendverse.Fragment.DetailReportUserFragment;
-import com.example.friendverse.Fragment.ProfileFragment;
-import com.example.friendverse.Fragment.ReportUserFragment;
+import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
+import com.example.friendverse.listeners.ConversionListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,24 +34,26 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserReportAllUserAdapter extends  RecyclerView.Adapter<UserReportAllUserAdapter.ViewHolder>{
+public class UserReportPostAdapter extends  RecyclerView.Adapter<UserReportPostAdapter.ViewHolder>{
 
     private Context sContext;
-    private List<User> sUser;
+    private List<Post> sPost;
     private FirebaseUser firebaseUser;
     private OnItemClickListener onItemClickListener;
     private List<String> id_ban;
+    private String username;
     private TextView tv_ban;
+    private ConversionListener conversionListener;
 
     View view;
     BottomSheetDialog bottomSheetDialog;
-    public UserReportAllUserAdapter(Context sContext, List<User> sUser) {
+    public UserReportPostAdapter(Context sContext, List<Post> sPost, ConversionListener conversionListener) {
         this.sContext = sContext;
-        this.sUser = sUser;
-
+        this.sPost = sPost;
+        this.conversionListener = conversionListener;
     }
     public interface OnItemClickListener {
-        void onItemClick(User user);
+        void onItemClick(Post post);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -63,46 +64,52 @@ public class UserReportAllUserAdapter extends  RecyclerView.Adapter<UserReportAl
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        view = LayoutInflater.from(sContext).inflate(R.layout.user_item_alluser,parent,false);
-        return  new UserReportAllUserAdapter.ViewHolder(view);
+        view = LayoutInflater.from(sContext).inflate(R.layout.user_item_report,parent,false);
+        return  new UserReportPostAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        User user = sUser.get(position);
+        Post post = sPost.get(position);
         id_ban = new ArrayList<>();
+        username = "";
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot item : snapshot.getChildren()) {
+                    User user = item.getValue(User.class);
+                    if (user.getId().equals(post.getPublisher())) {
+                        username = user.getUsername();
+                        break;
+                    }
+                }
+            }
 
-        holder.username.setText(user.getUsername());
-        holder.fullname.setText(user.getFullname());
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-        Picasso.get().load(user.getImageurl()).placeholder(R.mipmap.ic_launcher).into(holder.imageProfile);
+            }
+        });
 
-        if (user.getId().equals(firebaseUser.getUid())){
-            holder.imageProfile.setVisibility(View.GONE);
-            holder.username.setVisibility(View.GONE);
-            holder.fullname.setVisibility(View.GONE);
-        }
+        holder.username.setText(username);
+        holder.fullname.setText(post.getPostid());
+
+        Picasso.get().load(post.getPostimage()).placeholder(R.mipmap.ic_launcher).into(holder.imageProfile);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle passData = new Bundle();
-                passData.putString("profileid", user.getId());
-                Fragment detailReportUserFragment = new DetailReportUserFragment();
-                detailReportUserFragment.setArguments(passData);
-                FragmentManager fragmentManager = ((AppCompatActivity)sContext).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, detailReportUserFragment).addToBackStack(null);
-                fragmentTransaction.commit();
+                conversionListener.onConversionClicked(post);
             }
         });
-    }
 
+    }
 
     @Override
     public int getItemCount() {
-        return sUser.size();
+        return sPost.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -122,8 +129,8 @@ public class UserReportAllUserAdapter extends  RecyclerView.Adapter<UserReportAl
                     if (onItemClickListener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            User user = sUser.get(position);
-                            onItemClickListener.onItemClick(user);
+                            Post post = sPost.get(position);
+                            onItemClickListener.onItemClick(post);
                         }
                     }
                 }

@@ -146,6 +146,7 @@ public class ChatScreenActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                return;
             }
 
 
@@ -162,7 +163,6 @@ public class ChatScreenActivity extends AppCompatActivity {
                 senderUser = dataSnapshot.getValue(User.class);
 //                token=senderUser.getTokenCall();
 //                initStringeeConnection();
-
             }
 
             @Override

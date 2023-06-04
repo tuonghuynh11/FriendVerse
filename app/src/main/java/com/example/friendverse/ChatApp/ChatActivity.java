@@ -21,6 +21,7 @@ import com.example.friendverse.Adapter.RecentConversationAdapter;
 import com.example.friendverse.Adapter.UserChatStatusAdapter;
 import com.example.friendverse.Login.LoginActivity;
 import com.example.friendverse.Model.ChatMessage;
+import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
@@ -106,17 +107,6 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
         userIsFollowing = new ArrayList<>();
         userIsFollowingID = new ArrayList<>();
         userIsFollowingDefault = new ArrayList<>();
-
-        //User
-        activityChatBinding.userNameTextView.setText(LoginActivity.getCurrentUser.getFullname());
-        currentUser = LoginActivity.getCurrentUser;
-        if (token == "") {
-            token = LoginActivity.getCurrentUser.getTokenCall();
-            initStringeeConnection();
-        }
-
-        Picasso.get().load(LoginActivity.getCurrentUser.getImageurl()).placeholder(R.drawable.default_avatar).into(activityChatBinding.imageProfile);
-        //User
 
 
         setListeners();
@@ -336,7 +326,7 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
                     chatMessage.setSenderId(snapshot.child(ChatMessage.SENDERIDKEY).getValue().toString());
                     allConversation.add(chatMessage);
                     if (firebaseUser.getUid() == null)
-                        return;
+                        return ;
                     if (!(firebaseUser.getUid().equals(chatMessage.getSenderId())) && !(firebaseUser.getUid().equals(chatMessage.getReceiverId()))) {
                         if (chatMessage.getReceiverId().contains("group")) {
                             if (checkGroupHasUser(firebaseUser.getUid(), chatMessage.getReceiverId())) {
@@ -393,6 +383,33 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
                 userIsFollowingID.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     userIsFollowingID.add(snapshot.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+        reference= FirebaseDatabase.getInstance().getReference().child(User.USERKEY).child(firebaseUser.getUid());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user= snapshot.getValue(User.class);
+                currentUser=user;
+                //User
+                activityChatBinding.userNameTextView.setText(currentUser.getFullname());
+                Picasso.get().load(currentUser.getImageurl()).placeholder(R.drawable.default_avatar).into(activityChatBinding.imageProfile);
+                //User
+                ////Check if have tokenCall or not and assign token
+
+
+                ///
+                if (token == "") {
+                    token = currentUser.getTokenCall();
+                    initStringeeConnection();
                 }
             }
 
@@ -709,6 +726,11 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
         }
         intent.putExtra(User.USERKEY, user);
         startActivity(intent);
+    }
+
+    @Override
+    public void onConversionClicked(Post post) {
+
     }
 
 

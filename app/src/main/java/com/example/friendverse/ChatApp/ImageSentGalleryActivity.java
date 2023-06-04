@@ -2,6 +2,7 @@ package com.example.friendverse.ChatApp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.friendverse.Adapter.ImageSentAdapter;
+import com.example.friendverse.Fragment.ProfileFragment;
+import com.example.friendverse.MainActivity;
 import com.example.friendverse.Model.ChatMessage;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
@@ -93,7 +96,6 @@ public class ImageSentGalleryActivity extends AppCompatActivity {
                         GridLayoutManager manager = new GridLayoutManager(ImageSentGalleryActivity.this, 4);
                         imageSentRecyclerViews.setLayoutManager(manager);
                         imageSentRecyclerViews.setAdapter(imageSentAdapter);
-
                     }
 
                     @Override
@@ -113,7 +115,19 @@ public class ImageSentGalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Chuyen den profile cua user dang chat
-                Toast.makeText(ImageSentGalleryActivity.this, "Click the image", Toast.LENGTH_SHORT).show();
+
+                Bundle bundle =new Bundle();
+                bundle.putString("profileid",receiverId);
+
+
+                MainActivity mainActivity =new MainActivity();
+                mainActivity.selectedFragment =new ProfileFragment();
+                mainActivity.selectedFragment .setArguments(bundle);
+                Intent i =new Intent(getApplicationContext(), mainActivity.getClass());
+                i.putExtra("profileid",receiverId);
+                startActivity(i);
+
+              //  Toast.makeText(ImageSentGalleryActivity.this, "Click the image", Toast.LENGTH_SHORT).show();
             }
         });
 

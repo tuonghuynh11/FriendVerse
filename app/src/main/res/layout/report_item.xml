@@ -31,25 +31,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fullname"
-            android:text="Full name"
+            android:id="@+id/report"
+            android:text="Report"
             android:textSize="18dp"
             android:maxLines="1"/>
 
     </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/tv_ban"
-        android:layout_width="70dp"
-        android:textAlignment="center"
-        android:layout_height="30dp"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:text = "Ban"
-        android:textSize="20dp"
-        android:background="@drawable/rounded_button_red"
-        android:textColor="@color/white">
-    </TextView>
 
 </RelativeLayout>

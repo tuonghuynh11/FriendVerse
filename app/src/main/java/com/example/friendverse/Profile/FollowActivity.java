@@ -1,6 +1,7 @@
 package com.example.friendverse.Profile;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +15,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.friendverse.Adapter.UserAdapter;
+import com.example.friendverse.Adapter.LikeAdapter;
+
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +38,7 @@ public class FollowActivity extends AppCompatActivity {
     private List<String> idList;
 
     RecyclerView recyclerView;
-    UserAdapter userAdapter;
+    LikeAdapter list;
     List<User> userList;
 
     @Override
@@ -56,8 +58,10 @@ public class FollowActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         userList = new ArrayList<>();
-        userAdapter = new UserAdapter(this, userList);
-        recyclerView.setAdapter(userAdapter);
+        list = new LikeAdapter(this, userList);
+        recyclerView.setAdapter(list);
+
+
 
         idList = new ArrayList<>();
 
@@ -122,23 +126,21 @@ public class FollowActivity extends AppCompatActivity {
     }
     private void getLikes() {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Likes").child(id);
-
-        reference.addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("Likes").child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 idList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    idList.add(snapshot.getKey());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    idList.add((snapshot.getKey()));
                 }
                 showUsers();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+
 
     }
     private void showUsers() {
@@ -155,7 +157,7 @@ public class FollowActivity extends AppCompatActivity {
                         }
                     }
                 }
-                userAdapter.notifyDataSetChanged();
+                list.notifyDataSetChanged();
             }
 
             @Override

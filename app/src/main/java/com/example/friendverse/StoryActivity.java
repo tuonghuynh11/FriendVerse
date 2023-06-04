@@ -323,8 +323,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                 addView(storyIDs.get(i));
                 seenNumber(storyIDs.get(i));
 
-
-            }
+           }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

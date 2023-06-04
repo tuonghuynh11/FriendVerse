@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.friendverse.DialogLoadingBar.LoadingDialog;
+import com.example.friendverse.Login.ChangeUsernameActivity;
+import com.example.friendverse.Login.LoginActivity;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
 import com.example.friendverse.TestActivity;
@@ -184,36 +186,69 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 loadingDialog.showDialog();
-                if(!IsValidPhone(etPhone.getText().toString())){
-                    etPhone.setError("Phone is not valid");
-                    etPhone.requestFocus();
-                    loadingDialog.hideDialog();
-                    return;
-                }
-                else if(!IsValidEmail(etEmail.getText().toString())){
-                    etEmail.setError("Email is not valid");
-                    etEmail.requestFocus();
 
-                    loadingDialog.hideDialog();
-                    return;
-                }
-                else{
-                    if(imageUri != null){
-                        uploadToFirebase(imageUri);
+                FirebaseUser firebaseUser1 = mAuth.getCurrentUser();
+                String userID1 = firebaseUser1.getUid();
+
+                reference = FirebaseDatabase.getInstance().getReference().child("Users");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int flag = 0;
+                        for (DataSnapshot snapshot1: snapshot.getChildren()
+                        ) {
+                            User user = snapshot1.getValue(User.class);
+                            if(user != null){
+                                if(!userID1.equals(user.getId()) && etUsername.getText().toString().equals(user.getUsername())){
+                                    flag = 1;
+                                }
+                            }
+
+                        }
+                        if(flag == 1){
+                            etUsername.setError("Username has been used");
+                            etUsername.requestFocus();
+                            loadingDialog.hideDialog();
+                            return ;
+                        }
+                        else if(!IsValidPhone(etPhone.getText().toString())){
+                            etPhone.setError("Phone is not valid");
+                            etPhone.requestFocus();
+                            loadingDialog.hideDialog();
+                            return ;
+                        }
+                        else if(!IsValidEmail(etEmail.getText().toString())){
+                            etEmail.setError("Email is not valid");
+                            etEmail.requestFocus();
+
+                            loadingDialog.hideDialog();
+                            return ;
+                        }
+                        else{
+                            if(imageUri != null){
+                                uploadToFirebase(imageUri);
+                            }
+
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            String userID = firebaseUser.getUid();
+                            reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
+                            reference.child(User.FULLNAMEKEY).setValue(etFullname.getText().toString());
+                            reference.child(User.USERNAMEKEY).setValue(etUsername.getText().toString());
+                            reference.child(User.BIOKEY).setValue(etBio.getText().toString());
+                            reference.child(User.WEBSITEKEY).setValue(etWebsite.getText().toString());
+                            reference.child(User.EMAILOKEY).setValue(etEmail.getText().toString());
+                            reference.child(User.PHONEKEY).setValue(etPhone.getText().toString());
+                            loadingDialog.hideDialog();
+                            Toast.makeText(applicationContext, "Changes done", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
-                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                    String userID = firebaseUser.getUid();
-                    reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
-                    reference.child(User.FULLNAMEKEY).setValue(etFullname.getText().toString());
-                    reference.child(User.USERNAMEKEY).setValue(etUsername.getText().toString());
-                    reference.child(User.BIOKEY).setValue(etBio.getText().toString());
-                    reference.child(User.WEBSITEKEY).setValue(etWebsite.getText().toString());
-                    reference.child(User.EMAILOKEY).setValue(etEmail.getText().toString());
-                    reference.child(User.PHONEKEY).setValue(etPhone.getText().toString());
-                    loadingDialog.hideDialog();
-                    Toast.makeText(getActivity(), "Changes done", Toast.LENGTH_SHORT).show();
-                }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
 
 
 
