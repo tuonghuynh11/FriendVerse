@@ -69,9 +69,8 @@ public class PostDetailFragment extends Fragment {
             public void onClick(View view) {
 
 
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.popBackStack();
 //                FragmentManager fm = requireActivity().getSupportFragmentManager();
 //                fm.popBackStack();
 

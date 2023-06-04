@@ -80,7 +80,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder>{
                 editor.apply();
 
                 ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container ,
-                        new TagListFragment()).commit();
+                        new TagListFragment()).addToBackStack(null).commit();
             }
         });
 

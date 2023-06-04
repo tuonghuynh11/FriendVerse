@@ -1,16 +1,19 @@
 package com.example.friendverse.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +32,7 @@ import java.util.List;
 public class TagListFragment extends Fragment {
 
     private String jsonString;
+    private ImageView back;
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<Post> postList;
@@ -58,7 +62,23 @@ public class TagListFragment extends Fragment {
         postList = new ArrayList<>();
         postAdapter = new PostAdapter(getContext() , postList);
         recyclerView.setAdapter(postAdapter);
+        back = view.findViewById(R.id.back);
+//        VideoView videoView = view.findViewById(R.id.videoView);
+//        MediaController mediaController = new MediaController(getActivity());
+//        mediaController.setAnchorView(videoView);
+//        videoView.setMediaController(mediaController);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.popBackStack();
+//                FragmentManager fm = requireActivity().getSupportFragmentManager();
+//                fm.popBackStack();
+
+            }
+        });
         return view;
     }
 

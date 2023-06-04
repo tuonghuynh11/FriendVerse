@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FRIEND VERSE</string>
+    <string name="app_name">FriendVerse</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="phone_fragment">Phone number</string>
     <string name="hello_blank_fragment">Hello</string>
