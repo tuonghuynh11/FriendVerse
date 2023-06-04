@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,14 +50,7 @@ public class PostDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post_detail, container, false);
-
-//        Bundle bundle = this.getArguments();
-//        if (bundle == null) {
-//            return null;
-//        }
-//        postId = bundle.getString("postid");
-//        back = view.findViewById(R.id.back);
-        postId = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).getString("postid", "none");
+        postId = getArguments().getString("postid", "none");
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -65,19 +59,20 @@ public class PostDetailFragment extends Fragment {
         postAdapter = new PostAdapter(getContext(), postList);
         recyclerView.setAdapter(postAdapter);
 
-        ImageView backButton = view.findViewById(R.id.back);
+        back = view.findViewById(R.id.back);
 //        VideoView videoView = view.findViewById(R.id.videoView);
 //        MediaController mediaController = new MediaController(getActivity());
 //        mediaController.setAnchorView(videoView);
 //        videoView.setMediaController(mediaController);
-        backButton.setOnClickListener(new View.OnClickListener() {
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                FragmentManager fragmentManager = getParentFragmentManager();
-//                fragmentManager.popBackStack();
+
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+//                FragmentManager fm = requireActivity().getSupportFragmentManager();
+//                fm.popBackStack();
             }
         });
         FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {
