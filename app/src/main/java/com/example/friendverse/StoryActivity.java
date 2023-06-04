@@ -144,7 +144,6 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                 progressView.startStories(i);
                 Glide.with(StoryActivity.this).load(images.get(i)).into(image);
 
-
            }
 
            @Override

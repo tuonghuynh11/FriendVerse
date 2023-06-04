@@ -12,26 +12,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.friendverse.Login.LoginActivity;
 import com.example.friendverse.Login.StartActivity;
-import com.example.friendverse.MainActivity;
-import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SettingFragment extends Fragment {
 
     ImageView close;
     TextView logout, report;
     FirebaseUser firebaseUser;
+    BottomSheetDialog bottomSheetDialog;
     public SettingFragment() {
         // Required empty public constructor
     }
@@ -64,10 +65,37 @@ public class SettingFragment extends Fragment {
         report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = new AdminReportFragment();
-                FragmentManager fragmentManager = getParentFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+
+                bottomSheetDialog = new BottomSheetDialog(
+                        view.getContext(), R.style.BottomSheetDialogTheme
+                );
+                View bottomSheetView = LayoutInflater.from(view.getContext()).inflate
+                        (
+                                R.layout.layout_bottom_reportbanuser_sheet,
+                                (LinearLayout)view.findViewById(R.id.bottomSheetContainer)
+                        );
+                bottomSheetView.findViewById(R.id.user).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.cancel();
+                        Fragment fragment = new AdminReportFragment();
+                        FragmentManager fragmentManager = getParentFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                    }
+                });
+                bottomSheetView.findViewById(R.id.post).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.cancel();
+                        Fragment fragment = new AdminReportPostsFragment();
+                        FragmentManager fragmentManager = getParentFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commit();;
+                    }
+                });
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
             }
         });
 

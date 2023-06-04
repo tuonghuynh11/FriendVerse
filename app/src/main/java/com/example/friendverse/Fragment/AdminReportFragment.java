@@ -2,13 +2,6 @@ package com.example.friendverse.Fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -17,12 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.example.friendverse.Adapter.UserAdapter;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.friendverse.Adapter.UserReportAdapter;
 import com.example.friendverse.Adapter.UserReportAllUserAdapter;
+import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
+import com.example.friendverse.listeners.ConversionListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,19 +39,22 @@ import com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminReportFragment extends Fragment {
+public class AdminReportFragment extends Fragment implements ConversionListener {
     ImageView back;
     Button alluser_btn, report_btn;
     RecyclerView recyclerView_alluser, recyclerView_report;
+    boolean check = false;
     FirebaseUser firebaseUser;
     UserReportAdapter userReportAdapter_report;
     UserReportAllUserAdapter userReportAdapter_alluser;
-    private List<String> idList_ban;
     private List<User> allUsers;
     private List<User> userReports;
+    private BottomSheetDialog bottomSheetDialog;
     Context context;
     private SocialAutoCompleteTextView searchText;
-    int state = 0;
+    List<String> idList_ban;
+    private View view;
+    int state;
     public AdminReportFragment() {
         // Required empty public constructor
     }
@@ -56,45 +62,49 @@ public class AdminReportFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getBan();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_admin_report, container, false);
+        view =  inflater.inflate(R.layout.fragment_admin_report, container, false);
 
         alluser_btn = view.findViewById(R.id.alluserbtn);
         report_btn = view.findViewById(R.id.reportbtn);
+        state = 0;
 
         recyclerView_alluser = view.findViewById(R.id.recycler_alluser);
         recyclerView_alluser.setHasFixedSize(true);
         recyclerView_alluser.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView_alluser.setVisibility(View.VISIBLE);
         recyclerView_report = view.findViewById(R.id.recycler_report);
         recyclerView_report.setHasFixedSize(true);
         recyclerView_report.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView_report.setVisibility(View.GONE);
 
         allUsers = new ArrayList<User>();
         userReportAdapter_alluser = new UserReportAllUserAdapter(getContext(), allUsers);
         recyclerView_alluser.setAdapter(userReportAdapter_alluser);
 
         userReports = new ArrayList<User>();
-        userReportAdapter_report = new UserReportAdapter(getContext(), userReports);
+        userReportAdapter_report = new UserReportAdapter(getContext(), userReports, this);
         recyclerView_report.setAdapter(userReportAdapter_report);
 
         searchText = view.findViewById(R.id.search_bar);
 
         idList_ban = new ArrayList<>();
         AllUser();
-        AllUserReport();
+        ShowBan();
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                searchUser(s.toString().toLowerCase());
+                searchUser(s.toString().toLowerCase(), state);
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchUser(s.toString());
+                searchUser(s.toString().toLowerCase(), state);
             }
 
             @Override
@@ -105,28 +115,12 @@ public class AdminReportFragment extends Fragment {
         userReportAdapter_alluser.setOnItemClickListener(new UserReportAllUserAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(User user) {
-                Bundle bundle = new Bundle();
-                bundle.putString("userId", user.getId());
-                ProfileFragment profileFragment = new ProfileFragment();
-                profileFragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, profileFragment)
-                        .addToBackStack(null)
-                        .commit();
             }
         });
 
         userReportAdapter_report.setOnItemClickListener(new UserReportAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(User user) {
-                Bundle bundle = new Bundle();
-                bundle.putString("userId", user.getId());
-                ProfileFragment profileFragment = new ProfileFragment();
-                profileFragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, profileFragment)
-                        .addToBackStack(null)
-                        .commit();
             }
         });
 
@@ -142,35 +136,35 @@ public class AdminReportFragment extends Fragment {
         alluser_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (state != 0) {
-                    alluser_btn.setBackground(getResources().getDrawable(R.drawable.button_background_blue));
-                    alluser_btn.setTextColor(getResources().getColor(R.color.white));
-                    report_btn.setBackground(getResources().getDrawable(R.drawable.button_background));
-                    report_btn.setTextColor(getResources().getColor(R.color.black));
-                    recyclerView_alluser.setVisibility(View.VISIBLE);
-                    recyclerView_report.setVisibility(View.GONE);
-                    state = 0;
-                }
+                alluser_btn.setBackground(getResources().getDrawable(R.drawable.button_background_blue));
+                alluser_btn.setTextColor(getResources().getColor(R.color.white));
+                report_btn.setBackground(getResources().getDrawable(R.drawable.button_background));
+                report_btn.setTextColor(getResources().getColor(R.color.black));
+                recyclerView_alluser.setVisibility(View.VISIBLE);
+                recyclerView_report.setVisibility(View.GONE);
+                userReportAdapter_alluser.notifyDataSetChanged();
+                state = 0;
+                searchUser("", 0);
             }
         });
         report_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (state == 0) {
-                    report_btn.setBackground(getResources().getDrawable(R.drawable.button_background_blue));
-                    report_btn.setTextColor(getResources().getColor(R.color.white));
-                    alluser_btn.setBackground(getResources().getDrawable(R.drawable.button_background));
-                    alluser_btn.setTextColor(getResources().getColor(R.color.black));
-                    recyclerView_alluser.setVisibility(View.GONE);
-                    recyclerView_report.setVisibility(View.VISIBLE);
-                    state = 1;
-                }
+                report_btn.setBackground(getResources().getDrawable(R.drawable.button_background_blue));
+                report_btn.setTextColor(getResources().getColor(R.color.white));
+                alluser_btn.setBackground(getResources().getDrawable(R.drawable.button_background));
+                alluser_btn.setTextColor(getResources().getColor(R.color.black));
+                userReportAdapter_report.notifyDataSetChanged();
+                recyclerView_alluser.setVisibility(View.GONE);
+                recyclerView_report.setVisibility(View.VISIBLE);
+                state = 1;
+                searchUser("", 1);
             }
         });
         return view;
     }
 
-    private void searchUser(String s) {
+    private void searchUser(String s, int state) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (state == 0) {
             recyclerView_alluser.setVisibility(View.VISIBLE);
@@ -202,7 +196,6 @@ public class AdminReportFragment extends Fragment {
         else {
             recyclerView_alluser.setVisibility(View.GONE);
             recyclerView_report.setVisibility(View.VISIBLE);
-
             Query query = FirebaseDatabase.getInstance().getReference().child("Users")
                     .orderByChild("username")
                     .startAt(s)
@@ -210,10 +203,11 @@ public class AdminReportFragment extends Fragment {
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    getBan();
                     userReports.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User user = snapshot.getValue(User.class);
-                        if (!user.getId().equals(currentUser.getUid())) {
+                        if (idList_ban.contains(user.getId())) {
                             userReports.add(user);
                         }
                     }
@@ -226,47 +220,6 @@ public class AdminReportFragment extends Fragment {
                 }
             });
         }
-    }
-    private void showUsersBan() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                userReports.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User user = snapshot.getValue(User.class);
-                    for (String id : idList_ban){
-                        if (user.getId().equals(id)){
-                            userReports.add(user);
-                        }
-                    }
-                }
-                userReportAdapter_report.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-    private void getBan() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Ban");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                idList_ban.clear();
-                for (DataSnapshot item : snapshot.getChildren()){
-                    idList_ban.add(item.getKey().toString());
-                }
-                showUsersBan();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     private void AllUser() {
@@ -289,7 +242,25 @@ public class AdminReportFragment extends Fragment {
             }
         });
     }
-    private void AllUserReport() {
+    private void getBan() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Ban").child("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                idList_ban.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (snapshot.getKey() != "") {
+                        idList_ban.add(snapshot.getKey());
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void ShowBan() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -298,16 +269,70 @@ public class AdminReportFragment extends Fragment {
                     userReports.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User user = snapshot.getValue(User.class);
-                        userReports.add(user);
+                        if (idList_ban.contains(user.getId())) {
+                            userReports.add(user);
+                        }
                     }
-                    userReportAdapter_report.notifyDataSetChanged();
                 }
+                userReportAdapter_report.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+    }
+
+    @Override
+    public void onConversionClicked(User user) {
+        bottomSheetDialog = new BottomSheetDialog(
+                view.getContext(), R.style.BottomSheetDialogTheme
+        );
+        View bottomSheetView = LayoutInflater.from(view.getContext()).inflate
+                (
+                        R.layout.layout_bottom_alluser_sheet,
+                        (LinearLayout)view.findViewById(R.id.bottomSheetContainer)
+                );
+        TextView tv_unban = bottomSheetView.findViewById(R.id.ban);
+        tv_unban.setText("Unban");
+        bottomSheetView.findViewById(R.id.ban).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseDatabase.getInstance().getReference().child("Ban").child("Users").child(user.getId()).removeValue();
+                userReports.remove(user);
+                userReportAdapter_report.notifyDataSetChanged();
+                bottomSheetDialog.cancel();
+            }
+        });
+        bottomSheetView.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.cancel();
+            }
+        });
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+    }
+
+    @Override
+    public void onConversionClicked(Post post) {
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getBan();
+        searchUser("", 0);
     }
 }

@@ -22,7 +22,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linear_report"
+        android:id="@+id/linear_ban"
         >
         <LinearLayout
             android:layout_width="wrap_content"
@@ -39,8 +39,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:id="@+id/report"
-            android:text="Report"
+            android:id="@+id/ban"
+            android:text="Ban"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="24dp"/>
@@ -48,7 +48,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linear_setting"
+        android:id="@+id/linear_cancel"
         >
         <LinearLayout
             android:layout_width="wrap_content"
@@ -58,76 +58,17 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_setting"/>
+                android:background="@drawable/ic_back"/>
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:id="@+id/setting"
-            android:text="Setting"
+            android:text="Cancel"
+            android:id="@+id/cancel"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="24dp"/>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linear_youractivity"
-        >
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linear_qrcode"
-        >
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="30dp">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_qrcode"/>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="QR code"
-            android:id="@+id/qrcode"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="24dp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linear_wallet"
-        >
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="30dp">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_wallet"/>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="Wallet"
-            android:id="@+id/wallet"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="24dp"/>
-    </LinearLayout>
-
 </LinearLayout>

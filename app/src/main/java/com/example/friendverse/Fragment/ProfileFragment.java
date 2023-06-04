@@ -66,6 +66,7 @@ public class ProfileFragment extends Fragment {
 
     ImageButton my_photos, saved_photos;
     View root;
+    static int state = 0;
     static BottomSheetDialog bottomSheetDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,7 +77,6 @@ public class ProfileFragment extends Fragment {
 
 
         profileid = getArguments().getString("profileid");
-
 
         image_profile = root.findViewById(R.id.image_profile);
         options = root.findViewById(R.id.options);
@@ -91,6 +91,7 @@ public class ProfileFragment extends Fragment {
         my_photos = root.findViewById(R.id.my_photos);
         saved_photos = root.findViewById(R.id.save_photos);
         close = root.findViewById(R.id.close);
+        add = root.findViewById(R.id.add_box);
         if (getArguments().getString("isClose")!=null){
             if (getArguments().getString("isClose").equals("1")){
                 close.setVisibility(View.GONE);
@@ -127,11 +128,25 @@ public class ProfileFragment extends Fragment {
             edit_profile.setText("Edit Profile");
             share_profile.setText("Share Profile");
             close.setVisibility(View.GONE);
+            state = 0;
+            add.setVisibility(View.VISIBLE);
         }
         else {
             share_profile.setText("Message");
             checkFollow();
             saved_photos.setVisibility(View.GONE);
+            if (!close.isShown()) {
+                close.setVisibility(View.VISIBLE);
+            }
+            state = 1;
+            add.setVisibility(View.GONE);
+//            if (add.isShown()) {
+//                Toast.makeText(this.getContext(), "add is shown", Toast.LENGTH_SHORT).show();
+//                add.setVisibility(View.GONE);
+//            }
+//            else {
+//                Toast.makeText(this.getContext(), "add isn't shown", Toast.LENGTH_SHORT).show();
+//            }
         }
 
         edit_profile.setOnClickListener(new View.OnClickListener() {
@@ -178,6 +193,34 @@ public class ProfileFragment extends Fragment {
                         R.layout.layout_bottom_sheet,
                                 (LinearLayout)root.findViewById(R.id.bottomSheetContainer)
                         );
+                if (state == 0) {
+                    bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
+                    bottomSheetView.findViewById(R.id.linear_setting).setVisibility(View.VISIBLE);
+                    bottomSheetView.findViewById(R.id.linear_youractivity).setVisibility(View.VISIBLE);
+                    bottomSheetView.findViewById(R.id.linear_qrcode).setVisibility(View.VISIBLE);
+                    bottomSheetView.findViewById(R.id.linear_wallet).setVisibility(View.VISIBLE);
+                }
+                else if (state != 0){
+                    bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
+                    bottomSheetView.findViewById(R.id.linear_setting).setVisibility(View.GONE);
+                    bottomSheetView.findViewById(R.id.linear_youractivity).setVisibility(View.GONE);
+                    bottomSheetView.findViewById(R.id.linear_qrcode).setVisibility(View.GONE);
+                    bottomSheetView.findViewById(R.id.linear_wallet).setVisibility(View.GONE);
+                }
+                bottomSheetView.findViewById(R.id.report).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.cancel();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("profileid", profileid);
+                        Fragment reportUserFragment = new ReportUserFragment();
+                        reportUserFragment.setArguments(bundle);
+                        FragmentManager fragmentManager = getParentFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, reportUserFragment).addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                });
                 bottomSheetView.findViewById(R.id.setting).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -189,6 +232,17 @@ public class ProfileFragment extends Fragment {
                         fragmentTransaction.commit();
                     }
                 });
+//                bottomSheetView.findViewById(R.id.youractivity).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Fragment yourActivityFragment = new YourActivityFragment();
+//                        FragmentManager fragmentManager = getParentFragmentManager();
+//                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                        fragmentTransaction.replace(R.id.fragment_container, yourActivityFragment).addToBackStack(null);
+//                        fragmentTransaction.commit();
+//                    }
+//                });
+
                 bottomSheetDialog.setContentView(bottomSheetView);
                 bottomSheetDialog.show();
             }
@@ -265,7 +319,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (root.getContext() == null) {
-                    return;
+                    return ;
                 }
                 User user = new User();
                 user = snapshot.getValue(User.class);

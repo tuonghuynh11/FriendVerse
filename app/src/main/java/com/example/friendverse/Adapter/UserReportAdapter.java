@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 
+import android.widget.LinearLayout;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.MainActivity;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.R;
+import com.example.friendverse.listeners.ConversionListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +41,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,10 +55,14 @@ public class UserReportAdapter extends  RecyclerView.Adapter<UserReportAdapter.V
     private List<User> sUser;
     private FirebaseUser firebaseUser;
     private OnItemClickListener onItemClickListener;
-    public UserReportAdapter(Context sContext, List<User> sUser) {
+    private BottomSheetDialog bottomSheetDialog;
+    private ConversionListener conversionListener;
+    private View view;
+    public UserReportAdapter(Context sContext, List<User> sUser, ConversionListener conversionListener
+    ) {
         this.sContext = sContext;
         this.sUser = sUser;
-
+        this.conversionListener = conversionListener;
     }
     public interface OnItemClickListener {
         void onItemClick(User user);
@@ -67,7 +76,8 @@ public class UserReportAdapter extends  RecyclerView.Adapter<UserReportAdapter.V
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(sContext).inflate(R.layout.user_item_report,parent,false);
+        view = LayoutInflater.from(sContext).inflate(R.layout.user_item_report,parent,false);
+
         return  new UserReportAdapter.ViewHolder(view);
     }
 
@@ -76,7 +86,6 @@ public class UserReportAdapter extends  RecyclerView.Adapter<UserReportAdapter.V
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         User user = sUser.get(position);
-
         holder.username.setText(user.getUsername());
         holder.fullname.setText(user.getFullname());
 
@@ -91,14 +100,7 @@ public class UserReportAdapter extends  RecyclerView.Adapter<UserReportAdapter.V
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle passData = new Bundle();
-                passData.putString("profileid", user.getId());
-                Fragment editFragment = new ProfileFragment();
-                editFragment.setArguments(passData);
-                FragmentManager fragmentManager = ((AppCompatActivity)sContext).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, editFragment).addToBackStack(null);
-                fragmentTransaction.commit();
+                conversionListener.onConversionClicked(user);
             }
         });
 
@@ -127,7 +129,6 @@ public class UserReportAdapter extends  RecyclerView.Adapter<UserReportAdapter.V
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
                             User user = sUser.get(position);
-                            onItemClickListener.onItemClick(user);
                         }
                     }
                 }
