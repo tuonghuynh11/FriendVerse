@@ -1,14 +1,7 @@
-package com.example.friendverse;
+package com.example.friendverse.Fragment;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import static android.app.Activity.RESULT_OK;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -16,45 +9,50 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import android.provider.MediaStore;
-import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.example.friendverse.AddPost;
+import com.example.friendverse.MainActivity;
+import com.example.friendverse.R;
 import com.github.drjacky.imagepicker.ImagePicker;
 import com.github.drjacky.imagepicker.constant.ImageProvider;
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView;
 import com.theartofdev.edmodo.cropper.CropImage;
 
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,7 +60,21 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.internal.Intrinsics;
 
-public class AddPost extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link PostFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class PostFragment extends Fragment {
+
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
     ImageView postImage;
     VideoView video;
     Uri imageUri;
@@ -75,26 +87,54 @@ public class AddPost extends AppCompatActivity {
     StorageReference storageReference;
     UploadTask uploadTask;
     AlertDialog.Builder alertBuilder;
-    ProgressDialog progressDialog;
     ActivityResultLauncher mediaLauncher;
-    ActivityResultLauncher<Intent> resultLauncher;
+    private ActivityResultLauncher<Intent> resultLauncher;
     Uri uri;
-    @SuppressLint("ClickableViewAccessibility")
+
+    public PostFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment PostFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static PostFragment newInstance(String param1, String param2) {
+        PostFragment fragment = new PostFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_post);
-        postImage = findViewById(R.id.imageView);
-        postImage.setClipToOutline(true);
-        //logout = findViewById(R.id.logoutBtn);
-        post = findViewById(R.id.postBTN);
-        description = findViewById(R.id.description);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_post, container, false);
+        postImage = v.findViewById(R.id.imageView);
+        video = v.findViewById(R.id.videoView);
+        //logout = v.findViewById(R.id.logoutBtn);
+        post = v.findViewById(R.id.postBTN);
+        description = v.findViewById(R.id.description);
         FirebaseAuth auth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("Posts");
-        alertBuilder = new AlertDialog.Builder(this);
-        videoButton = findViewById(R.id.VideoButton);
-        video = findViewById(R.id.videoView);
+        alertBuilder = new AlertDialog.Builder(getActivity());
+        videoButton = v.findViewById(R.id.VideoButton);
         resultLauncher=
                 registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),(ActivityResult result)->{
                     if(result.getResultCode()==RESULT_OK){
@@ -102,7 +142,7 @@ public class AddPost extends AppCompatActivity {
                         postImage.setImageURI(imageUri);
                     }else if(result.getResultCode()== ImagePicker.RESULT_ERROR){
                         // Use ImagePicker.Companion.getError(result.getData()) to show an error
-                        Toast.makeText(getApplicationContext(), "No image selected!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "No image selected!", Toast.LENGTH_SHORT).show();
                     }
                 });
         mediaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -113,54 +153,31 @@ public class AddPost extends AppCompatActivity {
                     if(data != null){
                         uri = data.getData();
                         if(uri != null){
-                            ContentResolver contentResolver = getApplicationContext().getContentResolver();
+                            ContentResolver contentResolver = getActivity().getContentResolver();
                             String type = contentResolver.getType(uri);
 
-                            if(type.startsWith("video/")){
+                            if(type.contains("video/")){
                                 video.setVisibility(View.VISIBLE);
                                 postImage.setImageURI(null);
                                 postImage.setVisibility(View.GONE);
+                                video.setVideoURI(uri);
+                                video.start();
                                 try {
                                     long x = getVideoDuration(uri);
                                     if(x < 15000){
                                         video.setVideoURI(uri);
-                                        video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                            @Override
-                                            public void onPrepared(MediaPlayer mediaPlayer) {
-                                                mediaPlayer.setLooping(true);
-                                                mediaPlayer.start();
-                                                float videoRatio = mediaPlayer.getVideoWidth()/(float)mediaPlayer.getVideoHeight();
-                                                float screenRatio = video.getWidth()/(float)video.getHeight();
-                                                float scale = videoRatio/screenRatio;
-                                                if(scale >= 1f){
-                                                    video.setScaleX(scale);
-                                                }
-                                                else {
-                                                    video.setScaleY(1f/scale);
-                                                }
-                                            }
-                                        });
-                                        video.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                            @Override
-                                            public void onCompletion(MediaPlayer mediaPlayer) {
-                                                mediaPlayer.start();
-                                            }
-                                        });
+                                        video.start();
                                     }
                                     else
                                     {
-                                        uri = null;
-                                        Toast.makeText(getApplicationContext(), "The video limit is 15 seconds", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "The video limit is 15 seconds", Toast.LENGTH_LONG);
                                     }
+
+                                    description.setText(x + "");
+
                                 } catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                                video.setVideoURI(uri);
-
-                                //post.setEnabled(true);
-
-                                video.start();
-
                             }
 
                         }
@@ -169,19 +186,18 @@ public class AddPost extends AppCompatActivity {
 
             }
         });
-
         user = auth.getCurrentUser();
         if(user == null){
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            Intent i = new Intent(getContext(), MainActivity.class);
             startActivity(i);
         }
         /*logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                Intent i = new Intent(getActivity(), MainActivity.class);
                 startActivity(i);
-                finish();
+                getActivity().finish();
 
             }
         });*/
@@ -194,7 +210,6 @@ public class AddPost extends AppCompatActivity {
                 alertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //CropImage.activity().start(AddPost.this);
                         pickFromGallery();
                     }
                 });
@@ -209,6 +224,7 @@ public class AddPost extends AppCompatActivity {
 
             }
         });
+        //Click to the videoView will sent this
         video.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -248,7 +264,6 @@ public class AddPost extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 postImage.setVisibility(View.GONE);
-                                postImage.setImageURI(null);
                                 video.setVisibility(View.VISIBLE);
                                 videoButton.setText("Image");
 
@@ -266,7 +281,7 @@ public class AddPost extends AppCompatActivity {
                         break;
                     }
                     case "Image":{
-                        alertBuilder.setTitle("Change to image");
+                        alertBuilder.setTitle("Change image");
                         alertBuilder.setMessage("Do you want to change to image?");
                         alertBuilder.setCancelable(true);
                         alertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -285,12 +300,9 @@ public class AddPost extends AppCompatActivity {
                         });
                         AlertDialog alertDialog = alertBuilder.create();
                         alertDialog.show();
-                        break;
 
                     }
                 }
-                //post.setEnabled(false);
-
 
 
             }
@@ -299,21 +311,28 @@ public class AddPost extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(videoButton.getText().toString().equals("Video"))
-                {
                     uploadImage();
-                }
                 else
                     uploadVideo();
 
             }
         });
-        //CropImage.activity().start(AddPost.this);
         pickFromGallery();
-
-
+        return v;
     }
+    private long getVideoDuration(Uri URI) throws IOException {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//use one of overloaded setDataSource() functions to set your data source
+        retriever.setDataSource(getContext(), URI);
+        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        long timeInMillisec = Long.parseLong(time);
+
+        retriever.release();
+        return timeInMillisec;
+    }
+
     private void pickFromGallery() {
-        ImagePicker.Companion.with(this)
+        ImagePicker.Companion.with(this.requireActivity())
                 .crop()
                 .cropSquare()
                 .provider(ImageProvider.BOTH) //Or bothCameraGallery()
@@ -329,41 +348,14 @@ public class AddPost extends AppCompatActivity {
                     }
                 }));
     }
-    private long getVideoDuration(Uri URI) throws IOException {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-//use one of overloaded setDataSource() functions to set your data source
-        retriever.setDataSource(getApplicationContext(), URI);
-        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        long timeInMillisec = Long.parseLong(time);
-
-        retriever.release();
-        return timeInMillisec;
-    }
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            imageUri = result.getUri();
-
-            postImage.setImageURI(imageUri);
-            //post.setEnabled(true);
-        } else if(resultCode != RESULT_OK) {
-            Toast.makeText(this, "Something went wrong , try again!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(AddPost.this , MainActivity.class));
-            finish();
-        }
-
-    }
     private String getFileExtension(Uri uri) {
-        ContentResolver contentResolver = getContentResolver();
+        ContentResolver contentResolver = getActivity().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
 
         return mime.getExtensionFromMimeType(contentResolver.getType(uri));
     }
-
     void uploadVideo(){
-        progressDialog = new ProgressDialog(this);
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Posting video");
         progressDialog.show();
 
@@ -375,7 +367,7 @@ public class AddPost extends AppCompatActivity {
                 @Override
                 public Object then(@NonNull Task task) throws Exception {
                     if (!task.isSuccessful()){
-                        Toast.makeText(AddPost.this, "Money Trees", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Money Trees", Toast.LENGTH_SHORT).show();
 
                         throw task.getException();
                     }
@@ -399,7 +391,7 @@ public class AddPost extends AppCompatActivity {
                         hashMap.put("description" , description.getText().toString());
                         hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
                         hashMap.put("createdTime", System.currentTimeMillis());
-                        hashMap.put("postType", "video");
+                        hashMap.put("postType", "image");
 
                         reference.child(postid).setValue(hashMap);
                         DatabaseReference mHashTagRef = FirebaseDatabase.getInstance().getReference().child("HashTags");
@@ -419,27 +411,27 @@ public class AddPost extends AppCompatActivity {
 
                         progressDialog.dismiss();
 
-                        startActivity(new Intent(AddPost.this , MainActivity.class));
-                        finish();
+                        startActivity(new Intent(getActivity() , MainActivity.class));
+                        getActivity().finish();
                     } else {
-                        Toast.makeText(AddPost.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(AddPost.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
 
                 }
             });
         } else {
-            Toast.makeText(this, "No videos selected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No videos selected!", Toast.LENGTH_SHORT).show();
         }
     }
     private void uploadImage() {
 
-        final ProgressDialog progressDialog = new ProgressDialog(this);
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Posting");
         progressDialog.show();
 
@@ -451,7 +443,7 @@ public class AddPost extends AppCompatActivity {
                 @Override
                 public Object then(@NonNull Task task) throws Exception {
                     if (!task.isSuccessful()){
-                        Toast.makeText(AddPost.this, "Money Trees", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Money Trees", Toast.LENGTH_SHORT).show();
 
                         throw task.getException();
                     }
@@ -475,8 +467,6 @@ public class AddPost extends AppCompatActivity {
                         hashMap.put("description" , description.getText().toString());
                         hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
                         hashMap.put("createdTime", System.currentTimeMillis());
-                        hashMap.put("postType", "image");
-
                         reference.child(postid).setValue(hashMap);
                         DatabaseReference mHashTagRef = FirebaseDatabase.getInstance().getReference().child("HashTags");
                         List<String> hashtags = description.getHashtags();
@@ -495,22 +485,22 @@ public class AddPost extends AppCompatActivity {
 
                         progressDialog.dismiss();
 
-                        startActivity(new Intent(AddPost.this , MainActivity.class));
-                        finish();
+                        startActivity(new Intent(getActivity() , MainActivity.class));
+                        getActivity().finish();
                     } else {
-                        Toast.makeText(AddPost.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(AddPost.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
 
                 }
             });
         } else {
-            Toast.makeText(this, "No image selected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No image selected!", Toast.LENGTH_SHORT).show();
         }
 
     }

@@ -473,7 +473,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
 
     private void sharePostWithFollowers(final Post post) {
-        DatabaseReference followersRef = FirebaseDatabase.getInstance().getReference().child("Followers").child(firebaseUser.getUid());
+        DatabaseReference followersRef = FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid()).child("followers");
         followersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

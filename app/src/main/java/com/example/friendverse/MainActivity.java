@@ -18,6 +18,7 @@ import com.example.friendverse.Fragment.HomeFragment;
 import com.example.friendverse.Fragment.NotificationFragment;
 import com.example.friendverse.Fragment.NotifyFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
+import com.example.friendverse.Fragment.ReelFragment;
 import com.example.friendverse.Fragment.SearchFragment;
 import com.example.friendverse.Fragment.WatchFragment;
 import com.example.friendverse.Login.StartActivity;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new SearchFragment();
                 break;
             case id.nav_watch:
-                //selectedFragment = new WatchFragment();
+                selectedFragment = new ReelFragment();
                 break;
             case id.nav_notify:
                 selectedFragment = new NotificationFragment();

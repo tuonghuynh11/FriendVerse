@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddPost"
+    tools:context=".Fragment.PostFragment"
     >
 
     <androidx.appcompat.widget.Toolbar
@@ -20,9 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="350dp"
             android:layout_marginBottom="32dp"
-            android:background="@color/white"
-
+            android:background="@drawable/profileiconcorner"
             android:text="POST"
+            android:textColor="#f23456"
             app:flow_horizontalAlign="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -36,6 +36,7 @@
         android:background="@drawable/profileiconcorner"
         android:clipToOutline="true"
         android:scaleType="centerCrop"
+        android:src="@drawable/prisondom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +46,6 @@
         android:id="@+id/videoView"
         android:layout_width="274dp"
         android:layout_height="271dp"
-        android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

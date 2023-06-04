@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.AddReelFragment">
+
+    <VideoView
+        android:id="@+id/reel"
+        android:layout_marginStart="80dp"
+        android:layout_width="251dp"
+        android:layout_height="242dp"
+        android:layout_marginTop="100dp">
+
+    </VideoView>
+
+    <Button
+        android:id="@+id/reelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:layout_marginTop="500dp"
+        android:layout_marginStart="150dp"
+        />
+
+    <com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView
+        android:id="@+id/descriptionReel"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="360dp"
+        android:layout_marginStart="90dp"
+        android:hint="Write content here"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        app:hashtagColor="@color/colorPrimary"/>
+
+
+</RelativeLayout>
