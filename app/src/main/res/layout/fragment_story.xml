@@ -4,17 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DDB064"
-    tools:context=".StoryActivity">
+    tools:context=".Fragment.StoryFragment">
 
     <ImageView
-        android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="60dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/prisondom" />
+        android:id="@+id/image"
+        android:src="@drawable/prisondom"
+        android:scaleType="centerCrop"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,28 +23,29 @@
         android:orientation="horizontal">
 
         <View
-            android:id="@+id/reverse"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:id="@+id/reverse"
+            />
 
         <View
-            android:id="@+id/skip"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:id="@+id/skip"/>
 
     </LinearLayout>
 
     <jp.shts.android.storiesprogressview.StoriesProgressView
-        android:id="@+id/storiesProgress"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_marginTop="8dp"
+        android:id="@+id/storiesProgress"
+        android:paddingLeft="8dp"
+        android:paddingRight="1dp"
         android:gravity="top"
         android:max="5000"
-        android:paddingLeft="8dp"
-        android:paddingRight="1dp" />
+        android:layout_marginTop="8dp"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -54,11 +54,11 @@
         android:layout_margin="15dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/story_photo"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/prisondom" />
+            android:id="@+id/story_photo"
+            android:src="@drawable/prisondom"/>
 
         <TextView
             android:id="@+id/story_username"
@@ -78,53 +78,55 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/r_seen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:padding="3dp">
+        android:id="@+id/r_seen"
+        android:padding="3dp"
+        android:layout_marginBottom="50dp">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:src="@drawable/view_icon"
+            android:src="@drawable/view_icon_2"
 
             />
 
         <TextView
-            android:id="@+id/seen_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginStart="5dp"
-            android:text="0"
-            android:textColor="#ffffff"
+            android:textStyle="bold"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:text="0"
+            android:layout_gravity="center"
+            android:id="@+id/seen_number"
+            android:textColor="#ffffff" />
 
 
     </LinearLayout>
-
     <ImageView
         android:id="@+id/save"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="center"
+        android:src="@drawable/save"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="@dimen/_140sdp"
-        android:src="@drawable/ic_save_black" />
+        />
 
     <ImageView
-        android:id="@+id/story_delete"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
-        android:background="#20000000"
         android:padding="3dp"
-        android:src="@drawable/delete" />
+        android:id="@+id/story_delete"
+        android:background="#20000000"
+        android:src="@drawable/delete"/>
 
 </RelativeLayout>

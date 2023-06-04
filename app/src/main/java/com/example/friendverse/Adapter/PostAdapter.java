@@ -554,6 +554,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
     }
+
     public void getCurrentUser(){
         DatabaseReference mref = FirebaseDatabase.getInstance().getReference().child(User.USERKEY).child(firebaseUser.getUid());
         mref.addListenerForSingleValueEvent(new ValueEventListener() {

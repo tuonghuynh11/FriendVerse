@@ -32,6 +32,9 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
+            android:name=".AddReelActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChatApp.MembersGroupActivity"
             android:exported="false" />
         <activity
@@ -156,7 +159,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

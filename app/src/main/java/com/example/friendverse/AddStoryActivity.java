@@ -1,5 +1,8 @@
 package com.example.friendverse;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,8 @@ import android.os.Bundle;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import com.github.drjacky.imagepicker.ImagePicker;
+import com.github.drjacky.imagepicker.constant.ImageProvider;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -24,22 +29,55 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.internal.Intrinsics;
 
 public class AddStoryActivity extends AppCompatActivity {
     Uri imageUri;
     String myUrl;
     StorageReference storageReference;
     StorageTask uploadTask;
+    private ActivityResultLauncher<Intent> resultLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_story);
         storageReference = FirebaseStorage.getInstance().getReference("Stories");
-        CropImage.activity()
-                .setAspectRatio(9 , 16).start(AddStoryActivity.this);
+        //CropImage.activity().setAspectRatio(9 , 16).start(AddStoryActivity.this);
+        resultLauncher=
+                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),(ActivityResult result)->{
+                    if(result.getResultCode()==RESULT_OK){
+                        imageUri=result.getData().getData();
+                        uploadImage();
+                    }else if(result.getResultCode()== ImagePicker.RESULT_ERROR){
+                        // Use ImagePicker.Companion.getError(result.getData()) to show an error
+                        Toast.makeText(getApplicationContext(), "No image selected!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        pickFromGallery();
 
+    }
+    private void pickFromGallery() {
+        ImagePicker.Companion.with(this)
+                .crop()
+                .provider(ImageProvider.BOTH) //Or bothCameraGallery()
+                .createIntentFromDialog((Function1)(new Function1(){
+                    public Object invoke(Object var1){
+                        this.invoke((Intent)var1);
+                        return Unit.INSTANCE;
+                    }
 
+                    public final void invoke(@NotNull Intent it){
+                        Intrinsics.checkNotNullParameter(it,"it");
+                        resultLauncher.launch(it);
+                    }
+                }));
     }
     private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getContentResolver();
@@ -47,11 +85,10 @@ public class AddStoryActivity extends AppCompatActivity {
 
         return mime.getExtensionFromMimeType(contentResolver.getType(uri));
     }
+
     private void uploadImage() {
 
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Posting");
-        progressDialog.show();
+
 
         if (imageUri != null){
             final StorageReference filereference = storageReference.child(System.currentTimeMillis()+ "." + getFileExtension(imageUri));
@@ -89,7 +126,7 @@ public class AddStoryActivity extends AppCompatActivity {
 
 
 
-                        progressDialog.dismiss();
+                        Toast.makeText(AddStoryActivity.this, "Succeeded!", Toast.LENGTH_SHORT).show();
 
                         startActivity(new Intent(AddStoryActivity.this , MainActivity.class));
                         finish();
@@ -101,7 +138,6 @@ public class AddStoryActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(AddStoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
 
                 }
             });

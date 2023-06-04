@@ -1,29 +1,29 @@
-package com.example.friendverse;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
+package com.example.friendverse.Fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import android.os.CountDownTimer;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Model.Story;
 import com.example.friendverse.Model.User;
-import com.example.friendverse.Profile.FollowActivity;
+import com.example.friendverse.R;
+import com.example.friendverse.StoryActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,8 +39,21 @@ import java.util.List;
 
 import jp.shts.android.storiesprogressview.StoriesProgressView;
 
-public class StoryActivity extends AppCompatActivity implements StoriesProgressView.StoriesListener {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link StoryFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class StoryFragment extends Fragment implements StoriesProgressView.StoriesListener {
 
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
     LinearLayout seen;
     ImageView delete;
     ImageView image;
@@ -51,10 +64,10 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
     ImageView user_pic;
     TextView seen_number;
     ImageView save;
+
     String userid;
     List<String> images;
     List<String> storyIDs;
-
     int i = 0;
     long presstime = 0L;
     long limit = 500L;
@@ -76,56 +89,61 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             return false;
         }
     };
+    public StoryFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment StoryFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static StoryFragment newInstance(String param1, String param2) {
+        StoryFragment fragment = new StoryFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_story);
-        seen = findViewById(R.id.r_seen);
-        delete = findViewById(R.id.story_delete);
-        seen.setVisibility(View.VISIBLE);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_story, container, false);
+        seen = v.findViewById(R.id.r_seen);
+        delete = v.findViewById(R.id.story_delete);
+        seen.setVisibility(View.GONE);
         delete.setVisibility(View.GONE);
-        username = findViewById(R.id.story_username);
-        user_pic = findViewById(R.id.story_photo);
-        image = findViewById(R.id.image);
-        save = findViewById(R.id.save);
-        seen_number = findViewById(R.id.seen_number);
+        username = v.findViewById(R.id.story_username);
+        user_pic = v.findViewById(R.id.story_photo);
+        image = v.findViewById(R.id.image);
+        save = v.findViewById(R.id.save);
+        seen_number = v.findViewById(R.id.seen_number);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userid = user.getUid();
-        userid = getIntent().getStringExtra("userid");
-        if(userid.equals(user.getUid())){
-            delete.setVisibility(View.VISIBLE);
-        }
+        userid = getArguments().getString("userid");
 
-        //pro = findViewById(R.id.stories);
-        progressView = findViewById(R.id.storiesProgress);
-        progressView.setStoriesListener(StoryActivity.this);
-        View reverse = findViewById(R.id.reverse);
-
-        username.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences.Editor editor = getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                editor.putString("profileid", userid);
-                editor.apply();
-
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
-
-            }
-        });
-        user_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences.Editor editor = getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                editor.putString("profileid", userid);
-                editor.apply();
-
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
-
-            }
-        });
+        //pro = v.v.findViewById(R.id.stories);
+        progressView = v.findViewById(R.id.storiesProgress);
+        progressView.setStoriesListener(this);
+        View reverse = v.findViewById(R.id.reverse);
         reverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,32 +151,29 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             }
         });
         reverse.setOnTouchListener(onTouchListener);
-        View skip = findViewById(R.id.skip);
+        View skip = v.findViewById(R.id.skip);
         getStories(userid);
         getUserInfo(user_pic, username, userid);
+
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressView.skip();
             }
         });
-        skip.setOnTouchListener(onTouchListener);
-        save.setOnClickListener(new View.OnClickListener() {
+        username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                DatabaseReference saveRef = FirebaseDatabase.getInstance().getReference("Saves").child(currentUser.getUid()).child(storyIDs.get(i));
-                if(save.getTag().equals("save")){
-                    saveRef.setValue(true);
-                }
-                else {
-                    saveRef.removeValue();
-                }
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+                editor.putString("profileid", userid);
+                editor.apply();
 
-
+               getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new ProfileFragment()).commit();
 
             }
         });
+        skip.setOnTouchListener(onTouchListener);
         seen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,7 +183,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(StoryActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setCancelable(true);
                 builder.setTitle("Delete?");
                 builder.setMessage("Do you want to delete?");
@@ -187,7 +202,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
-                                    Toast.makeText(StoryActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "Deleted!", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -199,22 +214,23 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             }
         });
 
+
+        return v;
     }
 
     @Override
     public void onNext() {
-        Glide.with(getApplicationContext()).load(images.get(++i)).into(image);
+        Glide.with(getActivity()).load(images.get(++i)).into(image);
         addView(storyIDs.get(i));
         seenNumber(storyIDs.get(i));
 
 
     }
 
-    @Override
     public void onPrev() {
         if ((i - 1) < 0) return;
 
-        Glide.with(getApplicationContext()).load(images.get(--i)).into(image);
+        Glide.with(getActivity()).load(images.get(--i)).into(image);
         seenNumber(storyIDs.get(i));
 
 
@@ -229,7 +245,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
 
     @Override
     public void onComplete() {
-        finish();
+        getActivity().finish();
 
     }
     private void addView(String storyid){
@@ -254,37 +270,13 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             }
         });
     }
-    private void isSaved (final String storyid , final ImageView imageView) {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Saves")
-                .child(firebaseUser.getUid());
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(storyid).exists()){
-                    imageView.setImageResource(R.drawable.ic_save);
-                    imageView.setTag("saved");
-                } else {
-                    imageView.setImageResource(R.drawable.ic_save_black);
-                    imageView.setTag("save");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
     private void getUserInfo(ImageView imageView, TextView username, String userID){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                Glide.with(getApplicationContext()).load(user.getImageurl()).into(imageView);
+                Glide.with(getActivity()).load(user.getImageurl()).into(imageView);
                 username.setText(user.getUsername());
             }
 
@@ -312,18 +304,16 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                         storyIDs.add(myStory.getStoryID());
                     }
                 }
-                isSaved(storyIDs.get(i), save);
-
                 progressView.setStoriesCount(images.size());
-                progressView.setStoriesListener(StoryActivity.this);
+                progressView.setStoriesListener(StoryFragment.this);
                 progressView.setStoryDuration(5000);
                 progressView.startStories(i);
-                Glide.with(StoryActivity.this).load(images.get(i)).into(image);
-                isSaved(storyIDs.get(i), save);
+                Glide.with(getActivity()).load(images.get(i)).into(image);
                 addView(storyIDs.get(i));
                 seenNumber(storyIDs.get(i));
 
-           }
+
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

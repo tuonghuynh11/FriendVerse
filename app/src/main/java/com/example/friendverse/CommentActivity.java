@@ -32,6 +32,7 @@ public class CommentActivity extends AppCompatActivity {
     FirebaseUser currentUser;
     EditText comment;
     String postID;
+    String publisherID;
     RecyclerView commentLV;
     List<Comment> commentList;
     CommentAdapter cmtAdapter;
@@ -52,7 +53,9 @@ public class CommentActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
         commentLV.setLayoutManager(linearLayoutManager);
-        postID = "-NVeSq29BLnq5kz2LwRh";
+        //postID = "-NVeSq29BLnq5kz2LwRh";
+        postID = getIntent().getStringExtra("postid");
+        publisherID = getIntent().getStringExtra("publisherid");
         commentList = new ArrayList<>();
         cmtAdapter = new CommentAdapter(CommentActivity.this, commentList, postID);
         commentLV.setAdapter(cmtAdapter);
@@ -71,6 +74,7 @@ public class CommentActivity extends AppCompatActivity {
                     hashMap.put("publisher", currentUser.getUid());
                     reference.child(commentID).setValue(hashMap);
                     comment.setText("");
+                    addNotifications();
 
                 }
 
@@ -78,6 +82,18 @@ public class CommentActivity extends AppCompatActivity {
         });
         readComment();
 
+    }
+
+    private void addNotifications() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(publisherID);
+
+        HashMap<String , Object> hashMap = new HashMap<>();
+        hashMap.put("userid" , currentUser.getUid());
+        hashMap.put("text" , "commented: " + comment.getText().toString());
+        hashMap.put("postid" , postID);
+        hashMap.put("ispost" , true);
+
+        reference.push().setValue(hashMap);
     }
     void readComment(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comments").child(postID);
@@ -88,8 +104,9 @@ public class CommentActivity extends AppCompatActivity {
                 for(DataSnapshot e : snapshot.getChildren()){
                     Comment comment1 = e.getValue(Comment.class);
                     commentList.add(comment1);
-                    cmtAdapter.notifyDataSetChanged();
                 }
+                cmtAdapter.notifyDataSetChanged();
+
             }
 
             @Override
