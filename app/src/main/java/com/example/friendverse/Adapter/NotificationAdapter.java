@@ -141,8 +141,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
-                assert post != null;
-                Picasso.get().load(post.getPostimage()).into(imageView);
+               if (post != null) {
+                    Picasso.get().load(post.getPostimage()).into(imageView);
+                }
             }
 
             @Override
