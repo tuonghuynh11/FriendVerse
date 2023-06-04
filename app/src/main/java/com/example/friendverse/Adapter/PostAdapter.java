@@ -136,12 +136,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.videoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                editor.putString("postid", post.getPostid());
-                editor.apply();
-
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new PostDetailFragment()).commit();
+                Bundle passData = new Bundle();
+                passData.putString("postid", post.getPostid());
+                Fragment profileFragment = new PostDetailFragment();
+                profileFragment.setArguments(passData);
+                FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, profileFragment).addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
             holder.image_profile.setOnClickListener(new View.OnClickListener() {
@@ -232,16 +234,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                editor.putString("postid", post.getPostid());
-                editor.apply();
+////                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+////                editor.putString("postid", post.getPostid());
+////                editor.apply();
+//
+//
+//                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        new PostDetailFragment()).addToBackStack(null).commit();
+//                int a = holder.getPosition();
+//                HomeFragment.position = a;
 
-                ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new PostDetailFragment()).addToBackStack(null).commit();
-                int a = holder.getPosition();
-                HomeFragment.position = a;
-
-
+                Bundle passData = new Bundle();
+                passData.putString("postid", post.getPostid());
+                Fragment profileFragment = new PostDetailFragment();
+                profileFragment.setArguments(passData);
+                FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, profileFragment).addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 
