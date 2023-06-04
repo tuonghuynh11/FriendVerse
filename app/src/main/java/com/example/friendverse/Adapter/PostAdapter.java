@@ -33,6 +33,8 @@ import com.example.friendverse.Fragment.FollowFragment;
 import com.example.friendverse.Fragment.HomeFragment;
 import com.example.friendverse.Fragment.PostDetailFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
+import com.example.friendverse.Fragment.ReportUserFragment;
+import com.example.friendverse.MainActivity;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.Profile.SettingActivity;
@@ -318,7 +320,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.child(post.getPostid()).child("publisher").equals(firebaseUser.getUid())) {
+                        if (snapshot.child(post.getPostid()).child("publisher").getValue().equals(firebaseUser.getUid())) {
                             bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.VISIBLE);
                             bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
                             bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.VISIBLE);
@@ -364,6 +366,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 bottomSheetView.findViewById(R.id.report).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        bottomSheetDialog.cancel();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("postid", post.getPostid());
+                        Fragment reportFragment = new ReportUserFragment();
+                        reportFragment.setArguments(bundle);
+                        FragmentManager fragmentManager = ((MainActivity) mContext).getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, reportFragment).addToBackStack(null);
+                        fragmentTransaction.commit();
                     }
                 });
                 bottomSheetDialog.setContentView(bottomSheetView);

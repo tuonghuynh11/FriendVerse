@@ -159,7 +159,6 @@ public class GroupChatScreenActivity extends AppCompatActivity {
                 senderUser = dataSnapshot.getValue(User.class);
 //                token=senderUser.getTokenCall();
 //                initStringeeConnection();
-
             }
 
             @Override
@@ -318,7 +317,6 @@ public class GroupChatScreenActivity extends AppCompatActivity {
                         }
                     }
                 }
-
             }
 
             @Override

@@ -96,7 +96,6 @@ public class ImageSentGalleryActivity extends AppCompatActivity {
                         GridLayoutManager manager = new GridLayoutManager(ImageSentGalleryActivity.this, 4);
                         imageSentRecyclerViews.setLayoutManager(manager);
                         imageSentRecyclerViews.setAdapter(imageSentAdapter);
-
                     }
 
                     @Override

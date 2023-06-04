@@ -21,6 +21,7 @@ import com.example.friendverse.Adapter.RecentConversationAdapter;
 import com.example.friendverse.Adapter.UserChatStatusAdapter;
 import com.example.friendverse.Login.LoginActivity;
 import com.example.friendverse.Model.ChatMessage;
+import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
@@ -325,7 +326,7 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
                     chatMessage.setSenderId(snapshot.child(ChatMessage.SENDERIDKEY).getValue().toString());
                     allConversation.add(chatMessage);
                     if (firebaseUser.getUid() == null)
-                        return;
+                        return ;
                     if (!(firebaseUser.getUid().equals(chatMessage.getSenderId())) && !(firebaseUser.getUid().equals(chatMessage.getReceiverId()))) {
                         if (chatMessage.getReceiverId().contains("group")) {
                             if (checkGroupHasUser(firebaseUser.getUid(), chatMessage.getReceiverId())) {
@@ -725,6 +726,11 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
         }
         intent.putExtra(User.USERKEY, user);
         startActivity(intent);
+    }
+
+    @Override
+    public void onConversionClicked(Post post) {
+
     }
 
 

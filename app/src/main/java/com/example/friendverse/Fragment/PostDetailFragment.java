@@ -68,11 +68,13 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
+
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
 //                FragmentManager fm = requireActivity().getSupportFragmentManager();
 //                fm.popBackStack();
+
             }
         });
         FirebaseDatabase.getInstance().getReference().child("Posts").child(postId).addValueEventListener(new ValueEventListener() {

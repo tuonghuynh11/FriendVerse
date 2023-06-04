@@ -209,20 +209,20 @@ public class EditProfileFragment extends Fragment {
                             etUsername.setError("Username has been used");
                             etUsername.requestFocus();
                             loadingDialog.hideDialog();
-                            return;
+                            return ;
                         }
                         else if(!IsValidPhone(etPhone.getText().toString())){
                             etPhone.setError("Phone is not valid");
                             etPhone.requestFocus();
                             loadingDialog.hideDialog();
-                            return;
+                            return ;
                         }
                         else if(!IsValidEmail(etEmail.getText().toString())){
                             etEmail.setError("Email is not valid");
                             etEmail.requestFocus();
 
                             loadingDialog.hideDialog();
-                            return;
+                            return ;
                         }
                         else{
                             if(imageUri != null){

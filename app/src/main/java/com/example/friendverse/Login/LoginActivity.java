@@ -266,8 +266,6 @@ public class LoginActivity extends AppCompatActivity {
 
                                 User user = dataSnapshot.getValue(User.class);
                                 getCurrentUser = user;
-
-
                             }
 
                             @Override

@@ -338,7 +338,6 @@ public class GroupInformationActivity extends AppCompatActivity {
                     if (!userInGroupID.contains(snapshot.getKey().toString()))
                         userIsFollowingID.add(snapshot.getKey());
                 }
-
             }
 
             @Override
