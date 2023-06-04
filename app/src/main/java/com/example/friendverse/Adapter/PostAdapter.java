@@ -190,14 +190,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 final EditText editText = new EditText(mContext);
-                builder.setMessage("Bạn có muốn đăng lại bài viết này?")
-                        .setPositiveButton("Đăng lại", new DialogInterface.OnClickListener() {
+                builder.setMessage("Do you want to share this post?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 repostPost(post);
                             }
                         })
-                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -624,13 +624,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(mContext, "Đăng lại bài viết thành công", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Share Successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(mContext, "Đăng lại bài viết thất bại", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Fail To Share", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
