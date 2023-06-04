@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,8 @@ import androidx.appcompat.widget.PopupMenu;
 
 import com.bumptech.glide.Glide;
 import com.example.friendverse.CommentActivity;
+import com.example.friendverse.Fragment.FollowFragment;
+import com.example.friendverse.Fragment.HomeFragment;
 import com.example.friendverse.Fragment.PostDetailFragment;
 import com.example.friendverse.Fragment.ProfileFragment;
 import com.example.friendverse.Fragment.ReportUserFragment;
@@ -36,12 +39,15 @@ import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.Profile.SettingActivity;
 import com.example.friendverse.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.friendverse.Profile.FollowActivity;
@@ -64,13 +70,14 @@ import java.util.HashMap;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private Context mContext;
     private List<Post> mPosts;
-
+    private  User currentuser;
     private FirebaseUser firebaseUser;
 
     public PostAdapter(Context mContext, List<Post> mPosts) {
         this.mContext = mContext;
         this.mPosts = mPosts;
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        getCurrentUser();
 
     }
 
@@ -79,7 +86,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(mContext).inflate(R.layout.post_item , parent , false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
 
         return new PostAdapter.ViewHolder(view);
     }
@@ -93,26 +100,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             holder.videoView.setVisibility(View.GONE);
             Picasso.get().load(post.getPostimage()).placeholder(R.mipmap.ic_launcher).into(holder.post_image);
         } else if (post.getPostType().equals("video")) {
+//            holder.post_image.setVisibility(View.GONE);
+//            holder.videoView.setVisibility(View.VISIBLE);
+//            Uri videoUri = Uri.parse(post.getPostvid());
+//            ((AppCompatActivity) mContext).runOnUiThread(()->{holder.videoView.setVideoURI(    Uri.parse(  post.getPostvid()));});
+//            holder.videoView.setOnPreparedListener(mediaPlayer -> holder.videoView.start());
+//            holder.videoView.setVideoURI(videoUri);
+//            MediaController vidControl = new MediaController(mContext);
+//            vidControl.setAnchorView(holder.videoView);
+//            holder.videoView.setMediaController(vidControl);
+//            holder.videoView.start();
             holder.post_image.setVisibility(View.GONE);
             holder.videoView.setVisibility(View.VISIBLE);
             Uri videoUri = Uri.parse(post.getPostvid());
-            ((AppCompatActivity) mContext).runOnUiThread(()->{holder.videoView.setVideoURI(    Uri.parse(  post.getPostvid()));});
-            holder.videoView.setOnPreparedListener(mediaPlayer -> holder.videoView.start());
             holder.videoView.setVideoURI(videoUri);
-            MediaController vidControl = new MediaController(mContext);
-            vidControl.setAnchorView(holder.videoView);
-            holder.videoView.setMediaController(vidControl);
+            holder.videoView.setOnPreparedListener(mediaPlayer -> holder.videoView.start());
+//            MediaController vidControl = new MediaController(mContext);
+//            vidControl.setAnchorView(holder.videoView);
+//            holder.videoView.setMediaController(vidControl);
             holder.videoView.start();
 
         }
-        /*
-        if (post.getDescription().equals("")) {
+        if (post.getDescription() != null && post.getDescription().equals("")) {
             holder.description.setVisibility(View.GONE);
         } else {
             holder.description.setVisibility(View.VISIBLE);
             holder.description.setText(post.getDescription());
         }
-        */
+
         publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
         isLiked(post.getPostid(), holder.like);
         noLikes(holder.likes, post.getPostid());
@@ -129,7 +144,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         new PostDetailFragment()).commit();
             }
         });
-        holder.image_profile.setOnClickListener(new View.OnClickListener() {
+            holder.image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
@@ -173,10 +188,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle share button click
-                sharePostWithFollowers(post);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                final EditText editText = new EditText(mContext);
+                builder.setMessage("Bạn có muốn đăng lại bài viết này?")
+                        .setPositiveButton("Đăng lại", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                repostPost(post);
+                            }
+                        })
+                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         });
+
 
         holder.publisher.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +237,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 editor.apply();
 
                 ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new PostDetailFragment()).commit();
+                        new PostDetailFragment()).addToBackStack(null).commit();
+                int a = holder.getPosition();
+                HomeFragment.position = a;
+
+
             }
         });
 
@@ -263,13 +297,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.likes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext , FollowActivity.class);
-                intent.putExtra("id" , post.getPostid());
-                intent.putExtra("title" , "Likes");
-                mContext.startActivity(intent);
-            }
-        });
 
+                        Intent intent = new Intent(mContext, FollowActivity.class);
+                        intent.putExtra("id", post.getPostid());
+                        intent.putExtra("title", "Likes");
+                        mContext.startActivity(intent);
+                    }
+                });
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View root) {
@@ -410,8 +444,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
     }
-    private void isLiked(String postId, final ImageView imageView) {
-        FirebaseDatabase.getInstance().getReference().child("Likes").child(postId).addValueEventListener(new ValueEventListener() {
+    private void isLiked(String postid, final ImageView imageView) {
+        FirebaseDatabase.getInstance().getReference().child("Likes").child(postid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(firebaseUser.getUid()).exists()) {
@@ -429,6 +463,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
     }
+
 
     private void noOfLikes (String postId, final TextView text) {
         FirebaseDatabase.getInstance().getReference().child("Likes").child(postId).addValueEventListener(new ValueEventListener() {
@@ -519,69 +554,86 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
     }
-
-
-    private void sharePostWithFollowers(final Post post) {
-        DatabaseReference followersRef = FirebaseDatabase.getInstance().getReference().child("Followers").child(firebaseUser.getUid());
-        followersRef.addValueEventListener(new ValueEventListener() {
+    public void getCurrentUser(){
+        DatabaseReference mref = FirebaseDatabase.getInstance().getReference().child(User.USERKEY).child(firebaseUser.getUid());
+        mref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final List<String> followersList = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    followersList.add(snapshot.getKey());
-                }
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle("Select followers to share with")
-                        .setMultiChoiceItems(followersList.toArray(new String[0]), null, new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                                // Handle follower selection
-                            }
-                        })
-                        .setPositiveButton("Share", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SparseBooleanArray checkedItems = ((AlertDialog) dialog).getListView().getCheckedItemPositions();
-                                for (int i = 0; i < followersList.size(); i++) {
-                                    if (checkedItems.get(i)) {
-                                        String followerId = followersList.get(i);
-                                        sharePostWithFollower(followerId, post);
-                                    }
-                                }
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                currentuser = snapshot.getValue(User.class);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
+    public void repostPost(Post repostedPost) {
+        DatabaseReference mDatabaseRef;
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Reposts");
+        Post newPost = new Post();
+        repostedPost.setDescription(repostedPost.getDescription() + "\n\nRepost");
 
+        // Update the image_profile, username, and publisher fields with current user's information
+//        newPost.setImagine(currentUser.getPhotoUrl().toString());
+        newPost.setUsername(currentuser.getUsername());
+        newPost.setPublisher(currentuser.getId());
 
-    private void sharePostWithFollower(String followerId, Post post) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Shares")
-                .child(followerId)
-                .child(post.getPostid());
+        newPost.setPostType(repostedPost.getPostType());
+        if (newPost.getPostType().equals("video")) {
+            newPost.setPostvid(repostedPost.getPostvid());
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("postid", post.getPostid());
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
-        reference.updateChildren(hashMap);
+            String postid = reference.push().getKey();
+
+            HashMap<String , Object> hashMap = new HashMap<>();
+            hashMap.put("createdTime", System.currentTimeMillis());
+            hashMap.put("postType","video");
+            hashMap.put("postid" , postid);
+            hashMap.put("postvid" , repostedPost.getPostvid());
+            hashMap.put("description" , "*Repost*\n" +  repostedPost.getDescription().toString());
+            hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            reference.child(postid).setValue(hashMap);
+        } else if (newPost.getPostType().equals("image")) {
+            newPost.setPostimage(repostedPost.getPostimage());
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
+            String postid = reference.push().getKey();
+
+            HashMap<String , Object> hashMap = new HashMap<>();
+            hashMap.put("postType","image");
+            hashMap.put("postid" , postid);
+            hashMap.put("postimage" , repostedPost.getPostimage());
+            hashMap.put("description" , "*Repost*\n" +  repostedPost.getDescription().toString());
+            hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
+            hashMap.put("createdTime", System.currentTimeMillis());
+            reference.child(postid).setValue(hashMap);
+        }
+
+        newPost.setPostid(repostedPost.getPostid());
+        newPost.setRepostCount(repostedPost.getRepostCount());
+        newPost.setShared(true);
+
+        String postId = mDatabaseRef.push().getKey();
+        mDatabaseRef.child(postId).setValue(newPost);
+        mPosts.add(0, newPost);
+
+        mDatabaseRef.child(postId).setValue(newPost)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(mContext, "Đăng lại bài viết thành công", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(mContext, "Đăng lại bài viết thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
-
-
 
     private void getText(String postid , final EditText editText) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts")

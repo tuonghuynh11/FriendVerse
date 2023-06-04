@@ -82,6 +82,9 @@ public class FollowFragment extends Fragment {
             case "Followers":
                 getFollowers();
                 break;
+            case "Likes":
+                getLikes();
+                break;
         }
 
         close.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +137,27 @@ public class FollowFragment extends Fragment {
             }
         });
     }
+    private void getLikes() {
 
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Likes").child(id);;
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                idList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    idList.add(snapshot.getKey());
+                }
+                showUsers();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
     private void showUsers() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {

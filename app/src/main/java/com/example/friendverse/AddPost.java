@@ -292,6 +292,8 @@ public class AddPost extends AppCompatActivity {
                         String postid = reference.push().getKey();
 
                         HashMap<String , Object> hashMap = new HashMap<>();
+                        hashMap.put("createdTime", System.currentTimeMillis());
+                        hashMap.put("postType","video");
                         hashMap.put("postid" , postid);
                         hashMap.put("postvid" , myUrl);
                         hashMap.put("description" , description.getText().toString());
@@ -354,6 +356,7 @@ public class AddPost extends AppCompatActivity {
                         String postid = reference.push().getKey();
 
                         HashMap<String , Object> hashMap = new HashMap<>();
+                        hashMap.put("postType","image");
                         hashMap.put("postid" , postid);
                         hashMap.put("postimage" , myUrl);
                         hashMap.put("description" , description.getText().toString());
