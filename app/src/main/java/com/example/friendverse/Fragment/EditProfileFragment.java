@@ -136,7 +136,7 @@ public class EditProfileFragment extends Fragment {
                         if(dataSnapshot.child(User.IMAGEKEY).getValue() != null){
                             String image = String.valueOf(dataSnapshot.child(User.IMAGEKEY).getValue());
                             if(!image.equals("default"))
-                                Picasso.get().load(image).into(avtImage);
+                                Picasso.get().load(image).placeholder(R.drawable.default_user_avatar).into(avtImage);
                         }
                         if(dataSnapshot.child(User.USERNAMEKEY).getValue() != null){
                             String username = String.valueOf(dataSnapshot.child(User.USERNAMEKEY).getValue());

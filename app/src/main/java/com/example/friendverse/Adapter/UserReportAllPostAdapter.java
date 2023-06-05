@@ -72,19 +72,14 @@ public class UserReportAllPostAdapter extends  RecyclerView.Adapter<UserReportAl
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Post post = sPost.get(position);
         id_ban = new ArrayList<>();
-        username = "Hello";
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(post.getPublisher().trim());
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot item : snapshot.getChildren()) {
-                    User user = item.getValue(User.class);
-                    if (user.getId().trim().equals(post.getPublisher().trim())) {
-                        username = user.getUsername();
-                        break;
-                    }
-                }
+                User user = snapshot.getValue(User.class);
+                username = user.getUsername();
+                holder.username.setText(username);
             }
 
             @Override
@@ -93,7 +88,7 @@ public class UserReportAllPostAdapter extends  RecyclerView.Adapter<UserReportAl
             }
         });
 
-        holder.username.setText(username);
+
         holder.fullname.setText(post.getPostid());
 
         Picasso.get().load(post.getPostimage()).placeholder(R.mipmap.ic_launcher).into(holder.imageProfile);

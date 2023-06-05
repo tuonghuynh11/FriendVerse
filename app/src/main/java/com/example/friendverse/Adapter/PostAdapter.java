@@ -29,6 +29,7 @@ import androidx.appcompat.widget.PopupMenu;
 
 import com.bumptech.glide.Glide;
 import com.example.friendverse.CommentActivity;
+import com.example.friendverse.Fragment.EditPostFragment;
 import com.example.friendverse.Fragment.FollowFragment;
 import com.example.friendverse.Fragment.HomeFragment;
 import com.example.friendverse.Fragment.PostDetailFragment;
@@ -98,7 +99,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         if (post.getPostType().equals("image")) {
             holder.post_image.setVisibility(View.VISIBLE);
             holder.videoView.setVisibility(View.GONE);
-            Picasso.get().load(post.getPostimage()).placeholder(R.mipmap.ic_launcher).into(holder.post_image);
+            Picasso.get().load(post.getPostimage()).placeholder(R.drawable.app_icon_one).into(holder.post_image);
         } else if (post.getPostType().equals("video")) {
 //            holder.post_image.setVisibility(View.GONE);
 //            holder.videoView.setVisibility(View.VISIBLE);
@@ -350,6 +351,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 bottomSheetView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        bottomSheetDialog.cancel();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("postid", post.getPostid());
+                        Fragment editFragment = new EditPostFragment();
+                        editFragment.setArguments(bundle);
+                        FragmentManager fragmentManager = ((MainActivity) mContext).getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, editFragment).addToBackStack(null);
+                        fragmentTransaction.commit();
                     }
                 });
                 bottomSheetView.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
@@ -371,6 +381,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                         builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
                                 .setNegativeButton("No", dialogClickListener).show();
+                        bottomSheetDialog.cancel();
+                        FragmentManager fragmentManager = ((MainActivity) mContext).getSupportFragmentManager();
+                        fragmentManager.popBackStack();
                     }
                 });
                 bottomSheetView.findViewById(R.id.report).setOnClickListener(new View.OnClickListener() {

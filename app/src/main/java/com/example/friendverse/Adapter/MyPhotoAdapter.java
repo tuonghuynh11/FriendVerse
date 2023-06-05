@@ -24,6 +24,7 @@ import com.example.friendverse.Fragment.PostDetailFragment;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.R;
 import com.example.friendverse.databinding.FragmentEditProfileBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -47,8 +48,8 @@ public class MyPhotoAdapter extends RecyclerView.Adapter<MyPhotoAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post post = posts.get(position);
 
-        Glide.with(context).load(post.getPostimage()).into(holder.post_image);
-
+//        Glide.with(context).load(post.getPostimage()).into(holder.post_image);
+        Picasso.get().load(post.getPostimage()).placeholder(R.drawable.app_icon_one).into(holder.post_image);
         holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

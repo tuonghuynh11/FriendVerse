@@ -34,7 +34,7 @@
             android:id="@+id/report"
             android:text="Report"
             android:textSize="18dp"
-            android:maxLines="1"/>
+            android:maxLines="5"/>
 
     </LinearLayout>
 
