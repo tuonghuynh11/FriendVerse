@@ -11,9 +11,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.example.friendverse.Model.Post;
 import com.hendraanggrian.appcompat.socialview.Hashtagable;
 import com.hendraanggrian.appcompat.widget.HashtagArrayAdapter;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,6 +53,12 @@ public class SearchFragment extends Fragment {
     private SocialAutoCompleteTextView searchText;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        readTags();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
@@ -80,7 +89,7 @@ public class SearchFragment extends Fragment {
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                searchUser(s.toString().toLowerCase());
+
             }
 
             @Override
@@ -124,6 +133,24 @@ public class SearchFragment extends Fragment {
         tagAdapter.filterList(mSearchtags , mSearchTagsCount);
 
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        readTags();
+        searchUser("");
+        readUsers();
+    }
+
     private void readTags() {
 
         FirebaseDatabase.getInstance().getReference().child("HashTags").addValueEventListener(new ValueEventListener() {
@@ -135,7 +162,7 @@ public class SearchFragment extends Fragment {
                     mAvailablehashtags.add(snapshot.getKey());
                     mAvailablehashtagsCount.add(snapshot.getChildrenCount() + " ");
                 }
-
+                filter("");
                 tagAdapter.notifyDataSetChanged();
             }
 
@@ -161,7 +188,6 @@ public class SearchFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers.clear();
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
                     if (!user.getId().equals(currentUser.getUid())) {
