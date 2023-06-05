@@ -12,7 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <Button
             android:id="@+id/postBTN"
@@ -20,8 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="350dp"
             android:layout_marginBottom="32dp"
-            android:background="@color/white"
-
+            android:background="@android:color/transparent"
             android:text="POST"
             app:flow_horizontalAlign="center"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -55,27 +57,30 @@
     <com.hendraanggrian.appcompat.widget.SocialAutoCompleteTextView
         android:id="@+id/description"
         android:layout_width="377dp"
-        android:layout_height="208dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="64dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="132dp"
         android:ems="10"
         android:gravity="start|top"
-        android:inputType="textMultiLine"
         android:hint="Write your content here"
+        android:inputType="textMultiLine"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/VideoButton" />
 
     <Button
         android:id="@+id/VideoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
         android:layout_marginBottom="19dp"
-        android:background="@android:color/transparent"
-        android:textColor="#32f195"
-
         android:text="Video"
-        app:layout_constraintBottom_toTopOf="@+id/description"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:background="@android:color/transparent"
+
+        android:textColor="#32f195"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.448" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
