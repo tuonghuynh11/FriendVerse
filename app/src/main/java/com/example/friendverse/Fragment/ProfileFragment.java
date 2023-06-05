@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.friendverse.Adapter.MyPhotoAdapter;
+import com.example.friendverse.AddPost;
 import com.example.friendverse.ChatApp.ChatScreenActivity;
 import com.example.friendverse.Profile.FollowActivity;
 import com.example.friendverse.Model.Post;
@@ -176,6 +177,13 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 FragmentManager fragmentManager = getParentFragmentManager();
                 fragmentManager.popBackStack();
+            }
+        });
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), AddPost.class);
+                startActivity(i);
             }
         });
 
