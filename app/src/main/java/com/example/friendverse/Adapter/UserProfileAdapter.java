@@ -80,15 +80,12 @@ public class UserProfileAdapter extends  RecyclerView.Adapter<UserProfileAdapter
         holder.username.setText(user.getUsername());
         holder.fullname.setText(user.getFullname());
         String image = user.getImageurl();
-        Picasso.get().load(user.getImageurl()).placeholder(R.mipmap.ic_launcher).into(holder.imageProfile);
+        Picasso.get().load(user.getImageurl()).placeholder(R.drawable.ic_profile).into(holder.imageProfile);
 
         isFollowed(user.getId() , holder.btnFollow);
 
         if (user.getId().equals(firebaseUser.getUid())){
             holder.btnFollow.setVisibility(View.GONE);
-            holder.imageProfile.setVisibility(View.GONE);
-            holder.username.setVisibility(View.GONE);
-            holder.fullname.setVisibility(View.GONE);
         }
 
         holder.btnFollow.setOnClickListener(new View.OnClickListener() {

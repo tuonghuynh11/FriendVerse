@@ -27,7 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class ReportUserFragment extends Fragment {
-    ImageView back, options;
+    ImageView back;
     EditText field_report;
     Button report_btn;
     String profileid, postid, username;
@@ -117,13 +117,6 @@ public class ReportUserFragment extends Fragment {
             }
         });
 
-        options = view.findViewById(R.id.options);
-        options.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
         return view;
     }
 }

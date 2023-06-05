@@ -54,6 +54,7 @@ public class ProfileFragment extends Fragment {
    public ImageView options, close, add;
     CircleImageView image_profile;
     TextView posts, followers, following, fullname, bio, username;
+    LinearLayout linear_followers, linear_following;
     Button edit_profile, share_profile;
     RecyclerView recyclerView;
     MyPhotoAdapter myPhotoAdapter;
@@ -93,6 +94,8 @@ public class ProfileFragment extends Fragment {
         saved_photos = root.findViewById(R.id.save_photos);
         close = root.findViewById(R.id.close);
         add = root.findViewById(R.id.add_box);
+        linear_followers = root.findViewById(R.id.linear_followers);
+        linear_following = root.findViewById(R.id.linear_following);
         if (getArguments().getString("isClose")!=null){
             if (getArguments().getString("isClose").equals("1")){
                 close.setVisibility(View.GONE);
@@ -276,7 +279,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        followers.setOnClickListener(new View.OnClickListener() {
+        linear_followers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
@@ -291,7 +294,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        following.setOnClickListener(new View.OnClickListener() {
+        linear_following.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
@@ -333,11 +336,8 @@ public class ProfileFragment extends Fragment {
                 user = snapshot.getValue(User.class);
                 receiverUser=user;
                 String img = user.getImageurl();
-                if (img == null) {
-                    img = "https://play-lh.googleusercontent.com/iT_u15GsNd9BOPu_6vuUgL4t2-f0BZDGHO4ZaFqJ1ynKYs1j7TAu7P7IxK77EBh0cghQ";
-                }
                 //Glide.with(root.getContext()).load(img).into(image_profile);
-                Picasso.get().load(img).into(image_profile);
+                Picasso.get().load(img).placeholder(R.drawable.default_user_avatar).into(image_profile);
                 username.setText(user.getUsername());
                 fullname.setText(user.getFullname());
                 bio.setText(user.getBio());
