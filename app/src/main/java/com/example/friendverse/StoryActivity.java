@@ -87,7 +87,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
         username = findViewById(R.id.story_username);
         user_pic = findViewById(R.id.story_photo);
         image = findViewById(R.id.image);
-        save = findViewById(R.id.save);
+        //save = findViewById(R.id.save);
         seen_number = findViewById(R.id.seen_number);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -143,7 +143,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             }
         });
         skip.setOnTouchListener(onTouchListener);
-        save.setOnClickListener(new View.OnClickListener() {
+        /*save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -158,7 +158,7 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
 
 
             }
-        });
+        });*/
         seen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,26 +174,27 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                 builder.setMessage("Do you want to delete?");
                 builder.setNegativeButton("No way", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
+                    public void onClick(DialogInterface dialogInterface, int inter) {
+                        dialogInterface.dismiss();
                     }
                 });
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(DialogInterface dialogInterface, int inter) {
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Stories")
                                 .child(userid).child(storyIDs.get(i));
                         reference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
-                                    Toast.makeText(StoryActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(StoryActivity.this, "Story successfully deleted!", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
 
                     }
                 });
+                builder.create().show();
 
 
             }
@@ -312,14 +313,13 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                         storyIDs.add(myStory.getStoryID());
                     }
                 }
-                isSaved(storyIDs.get(i), save);
 
                 progressView.setStoriesCount(images.size());
                 progressView.setStoriesListener(StoryActivity.this);
                 progressView.setStoryDuration(5000);
                 progressView.startStories(i);
                 Glide.with(StoryActivity.this).load(images.get(i)).into(image);
-                isSaved(storyIDs.get(i), save);
+                //isSaved(storyIDs.get(i), save);
                 addView(storyIDs.get(i));
                 seenNumber(storyIDs.get(i));
 

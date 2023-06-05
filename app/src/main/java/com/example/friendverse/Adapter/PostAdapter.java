@@ -137,6 +137,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.videoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Bundle passData = new Bundle();
                 passData.putString("postid", post.getPostid());
                 Fragment profileFragment = new PostDetailFragment();
@@ -145,6 +146,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, profileFragment).addToBackStack(null);
                 fragmentTransaction.commit();
+
             }
         });
             holder.image_profile.setOnClickListener(new View.OnClickListener() {

@@ -350,7 +350,7 @@ public class AddPost extends AppCompatActivity {
             //post.setEnabled(true);
         } else if(resultCode != RESULT_OK) {
             Toast.makeText(this, "Something went wrong , try again!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(AddPost.this , MainActivity.class));
+            //startActivity(new Intent(AddPost.this , MainActivity.class));
             finish();
         }
 
@@ -421,7 +421,7 @@ public class AddPost extends AppCompatActivity {
 
                         progressDialog.dismiss();
 
-                        startActivity(new Intent(AddPost.this , MainActivity.class));
+                       // startActivity(new Intent(AddPost.this , MainActivity.class));
                         finish();
                     } else {
                         Toast.makeText(AddPost.this, "Failed!", Toast.LENGTH_SHORT).show();
@@ -498,7 +498,7 @@ public class AddPost extends AppCompatActivity {
 
                         progressDialog.dismiss();
 
-                        startActivity(new Intent(AddPost.this , MainActivity.class));
+                        //startActivity(new Intent(AddPost.this , MainActivity.class));
                         finish();
                     } else {
                         Toast.makeText(AddPost.this, "Failed!", Toast.LENGTH_SHORT).show();

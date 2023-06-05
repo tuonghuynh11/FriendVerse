@@ -12,11 +12,15 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.github.drjacky.imagepicker.ImagePicker;
 import com.github.drjacky.imagepicker.constant.ImageProvider;
+import com.github.drjacky.imagepicker.listener.DismissListener;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +44,8 @@ import kotlin.jvm.internal.Intrinsics;
 public class AddStoryActivity extends AppCompatActivity {
     Uri imageUri;
     String myUrl;
+    Button add;
+    Button cancel;
     StorageReference storageReference;
     StorageTask uploadTask;
     private ActivityResultLauncher<Intent> resultLauncher;
@@ -59,14 +65,38 @@ public class AddStoryActivity extends AppCompatActivity {
                         // Use ImagePicker.Companion.getError(result.getData()) to show an error
                         Toast.makeText(getApplicationContext(), "No image selected!", Toast.LENGTH_SHORT).show();
                     }
+                    else if(result.getResultCode() == RESULT_CANCELED){
+                        finish();
+                    }
                 });
+        add = findViewById(R.id.add_story);
+        cancel = findViewById(R.id.cancel);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickFromGallery();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         pickFromGallery();
 
     }
     private void pickFromGallery() {
         ImagePicker.Companion.with(this)
                 .crop()
-                .provider(ImageProvider.BOTH) //Or bothCameraGallery()
+                .provider(ImageProvider.BOTH).setDismissListener(new DismissListener() {
+                    @Override
+                    public void onDismiss() {
+
+
+                        Log.d("ImagePicker", "onDismiss");
+                    }
+                }) //Or bothCameraGallery()
                 .createIntentFromDialog((Function1)(new Function1(){
                     public Object invoke(Object var1){
                         this.invoke((Intent)var1);
@@ -154,7 +184,7 @@ public class AddStoryActivity extends AppCompatActivity {
             imageUri = result.getUri();
             uploadImage();
 
-        } else {
+        } else if(resultCode != RESULT_OK) {
             Toast.makeText(this, "Something went wrong , try again!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(AddStoryActivity.this , MainActivity.class));
             finish();
