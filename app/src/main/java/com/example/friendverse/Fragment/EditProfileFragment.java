@@ -211,6 +211,12 @@ public class EditProfileFragment extends Fragment {
                             loadingDialog.hideDialog();
                             return ;
                         }
+                        else if(TextUtils.isEmpty(etUsername.getText().toString())){
+                            etUsername.setError("Username can't be empty");
+                            etUsername.requestFocus();
+                            loadingDialog.hideDialog();
+                            return ;
+                        }
                         else if(!IsValidPhone(etPhone.getText().toString())){
                             etPhone.setError("Phone is not valid");
                             etPhone.requestFocus();
