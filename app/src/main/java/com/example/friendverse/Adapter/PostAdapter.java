@@ -149,7 +149,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             }
         });
-            holder.image_profile.setOnClickListener(new View.OnClickListener() {
+        holder.image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
@@ -311,12 +311,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
 
-                        Intent intent = new Intent(mContext, FollowActivity.class);
-                        intent.putExtra("id", post.getPostid());
-                        intent.putExtra("title", "Likes");
-                        mContext.startActivity(intent);
-                    }
-                });
+                Intent intent = new Intent(mContext, FollowActivity.class);
+                intent.putExtra("id", post.getPostid());
+                intent.putExtra("title", "Likes");
+                mContext.startActivity(intent);
+            }
+        });
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View root) {
@@ -333,17 +333,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.child(post.getPostid()).getValue() != null) {
-                            if (snapshot.child(post.getPostid()).child("publisher").getValue().equals(firebaseUser.getUid())) {
-                                bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.VISIBLE);
-                                bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
-                                bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.VISIBLE);
-                            }
-                            else {
-                                bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.GONE);
-                                bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
-                                bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.GONE);
-                            }
+                        if (snapshot.child(post.getPostid()).child("publisher").getValue().equals(firebaseUser.getUid())) {
+                            bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.VISIBLE);
+                            bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
+                            bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.GONE);
+                            bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
+                            bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.GONE);
                         }
                     }
 
@@ -374,20 +372,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which){
                                     case DialogInterface.BUTTON_POSITIVE:
-                                        FragmentManager fragmentManager = ((MainActivity) mContext).getSupportFragmentManager();
-                                        fragmentManager.popBackStack();
                                         FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPostid()).removeValue();
                                         break;
 
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         break;
                                 }
-                                bottomSheetDialog.cancel();
                             }
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                         builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
                                 .setNegativeButton("No", dialogClickListener).show();
+                        bottomSheetDialog.cancel();
+                        FragmentManager fragmentManager = ((MainActivity) mContext).getSupportFragmentManager();
+                        fragmentManager.popBackStack();
                     }
                 });
                 bottomSheetView.findViewById(R.id.report).setOnClickListener(new View.OnClickListener() {
@@ -597,13 +595,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         });
     }
     public void repostPost(Post repostedPost) {
-        DatabaseReference mDatabaseRef;
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Reposts");
+        DatabaseReference reference;
+        reference = FirebaseDatabase.getInstance().getReference("Posts");
         Post newPost = new Post();
-        repostedPost.setDescription(repostedPost.getDescription() + "\n\nRepost");
 
-        // Update the image_profile, username, and publisher fields with current user's information
-//        newPost.setImagine(currentUser.getPhotoUrl().toString());
+
         newPost.setUsername(currentuser.getUsername());
         newPost.setPublisher(currentuser.getId());
 
@@ -611,7 +607,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         if (newPost.getPostType().equals("video")) {
             newPost.setPostvid(repostedPost.getPostvid());
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
             String postid = reference.push().getKey();
 
@@ -623,10 +618,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             hashMap.put("description" , "*Repost*\n" +  repostedPost.getDescription().toString());
             hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-            reference.child(postid).setValue(hashMap);
+            reference.child(postid).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(mContext, "Share Successfully", Toast.LENGTH_SHORT).show();
+                }
+            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(mContext, "Fail To Share", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         } else if (newPost.getPostType().equals("image")) {
             newPost.setPostimage(repostedPost.getPostimage());
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
             String postid = reference.push().getKey();
 
@@ -637,30 +642,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             hashMap.put("description" , "*Repost*\n" +  repostedPost.getDescription().toString());
             hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
             hashMap.put("createdTime", System.currentTimeMillis());
-            reference.child(postid).setValue(hashMap);
+            reference.child(postid).setValue(hashMap) .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(mContext, "Share Successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(mContext, "Fail To Share", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
-
-        newPost.setPostid(repostedPost.getPostid());
-        newPost.setRepostCount(repostedPost.getRepostCount());
-        newPost.setShared(true);
-
-        String postId = mDatabaseRef.push().getKey();
-        mDatabaseRef.child(postId).setValue(newPost);
-        mPosts.add(0, newPost);
-
-        mDatabaseRef.child(postId).setValue(newPost)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(mContext, "Share Successfully", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(mContext, "Fail To Share", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        String postId = reference.push().getKey();
     }
 
     private void getText(String postid , final EditText editText) {
