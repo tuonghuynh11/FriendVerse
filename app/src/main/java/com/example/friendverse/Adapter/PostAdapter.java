@@ -333,15 +333,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.child(post.getPostid()).child("publisher").getValue().equals(firebaseUser.getUid())) {
-                            bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.VISIBLE);
-                            bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
-                            bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.VISIBLE);
-                        }
-                        else {
-                            bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.GONE);
-                            bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
-                            bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.GONE);
+                        if (snapshot.child(post.getPostid()).getValue() != null) {
+                            if (snapshot.child(post.getPostid()).child("publisher").getValue().equals(firebaseUser.getUid())) {
+                                bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.VISIBLE);
+                                bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
+                                bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                bottomSheetView.findViewById(R.id.linear_edit).setVisibility(View.GONE);
+                                bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
+                                bottomSheetView.findViewById(R.id.linear_delete).setVisibility(View.GONE);
+                            }
                         }
                     }
 
@@ -372,20 +374,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which){
                                     case DialogInterface.BUTTON_POSITIVE:
+                                        FragmentManager fragmentManager = ((MainActivity) mContext).getSupportFragmentManager();
+                                        fragmentManager.popBackStack();
                                         FirebaseDatabase.getInstance().getReference().child("Posts").child(post.getPostid()).removeValue();
                                         break;
 
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         break;
                                 }
+                                bottomSheetDialog.cancel();
                             }
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                         builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
                                 .setNegativeButton("No", dialogClickListener).show();
-                        bottomSheetDialog.cancel();
-                        FragmentManager fragmentManager = ((MainActivity) mContext).getSupportFragmentManager();
-                        fragmentManager.popBackStack();
                     }
                 });
                 bottomSheetView.findViewById(R.id.report).setOnClickListener(new View.OnClickListener() {
