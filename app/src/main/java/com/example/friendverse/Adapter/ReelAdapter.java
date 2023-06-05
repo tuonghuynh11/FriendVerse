@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.method.MovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.SparseBooleanArray;
@@ -20,7 +21,11 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -79,7 +84,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                Glide.with(thisContext.getApplicationContext()).load(user.getImageurl()).into(holder.user_Icon);
+                Glide.with(thisContext.getApplicationContext()).load(user.getImageurl()).placeholder(R.drawable.default_user_avatar).into(holder.user_Icon);
                 holder.username.setText(user.getUsername());
 
             }
@@ -122,6 +127,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
                                                 thisContext.startActivity(intent);
                                             }
                                         });
+
         holder.addReel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,23 +167,29 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
         holder.username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = thisContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                editor.putString("profileid", reel.getPublisher());
-                editor.apply();
+                Bundle passData = new Bundle();
+                passData.putString("profileid", reel.getPublisher());
+                Fragment profileFragment = new ProfileFragment();
+                profileFragment.setArguments(passData);
+                FragmentManager fragmentManager = ((AppCompatActivity)thisContext).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, profileFragment).addToBackStack(null);
+                fragmentTransaction.commit();
 
-                ((FragmentActivity) thisContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
+
             }
         });
         holder.user_Icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = thisContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                editor.putString("profileid", reel.getPublisher());
-                editor.apply();
-
-                ((FragmentActivity) thisContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
+                Bundle passData = new Bundle();
+                passData.putString("profileid", reel.getPublisher());
+                Fragment profileFragment = new ProfileFragment();
+                profileFragment.setArguments(passData);
+                FragmentManager fragmentManager = ((AppCompatActivity)thisContext).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, profileFragment).addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
         holder.save.setOnClickListener(new View.OnClickListener() {
@@ -231,11 +243,11 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
             if(reelList.get(position).getPostid() != null){
                 reelVid.setVideoURI(Uri.parse(reelList.get(position).getPostvid()));
             }
+
             reelVid.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
-                    mediaPlayer.setLooping(true);
-                    mediaPlayer.start();
+                    //mediaPlayer.start();
                     float videoRatio = mediaPlayer.getVideoWidth()/(float)mediaPlayer.getVideoHeight();
                     float screenRatio = reelVid.getWidth()/(float)reelVid.getHeight();
                     float scale = videoRatio/screenRatio;
