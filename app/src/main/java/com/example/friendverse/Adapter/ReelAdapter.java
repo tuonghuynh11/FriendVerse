@@ -7,12 +7,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.text.method.MovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +31,8 @@ import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
 import com.example.friendverse.Profile.FollowActivity;
 import com.example.friendverse.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,9 +49,12 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
     Context thisContext;
     List<Post> reelList;
     FirebaseUser firebaseUser;
+    User currentuser;
     public ReelAdapter(Context context, List<Post> reelList){
         thisContext = context;
         this.reelList = reelList;
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        getCurrentUser();
 
     }
     @NonNull
@@ -61,7 +70,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
         holder.setData(position);
         Post reel = reelList.get(position);
         holder.content.setText(reel.getDescription());
-
+        holder.content.setMovementMethod(new ScrollingMovementMethod());
         isLikes(reel.getPostid(), holder.like);
         String id = reel.getPublisher();
 
@@ -129,9 +138,25 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
         holder.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //sharePostWithFollowers(reel);
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(thisContext);
+                final EditText editText = new EditText(thisContext);
+                builder.setMessage("Do you want to share this post?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                repostPost(reel);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
+
+
         });
         holder.username.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,6 +279,86 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
 
             }
         });
+    }
+    public void getCurrentUser(){
+        DatabaseReference mref = FirebaseDatabase.getInstance().getReference().child(User.USERKEY).child(firebaseUser.getUid());
+        mref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                currentuser = snapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    public void repostPost(Post repostedPost) {
+        DatabaseReference mDatabaseRef;
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Reposts");
+        Post newPost = new Post();
+        repostedPost.setDescription(repostedPost.getDescription() + "\n\nRepost");
+
+        // Update the image_profile, username, and publisher fields with current user's information
+//        newPost.setImagine(currentUser.getPhotoUrl().toString());
+        newPost.setUsername(currentuser.getUsername());
+        newPost.setPublisher(currentuser.getId());
+
+        newPost.setPostType(repostedPost.getPostType());
+        if (newPost.getPostType().equals("video")) {
+            newPost.setPostvid(repostedPost.getPostvid());
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
+            String postid = reference.push().getKey();
+
+            HashMap<String , Object> hashMap = new HashMap<>();
+            hashMap.put("createdTime", System.currentTimeMillis());
+            hashMap.put("postType","video");
+            hashMap.put("postid" , postid);
+            hashMap.put("postvid" , repostedPost.getPostvid());
+            hashMap.put("description" , "*Repost*\n" +  repostedPost.getDescription().toString());
+            hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            reference.child(postid).setValue(hashMap);
+        } else if (newPost.getPostType().equals("image")) {
+            newPost.setPostimage(repostedPost.getPostimage());
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
+            String postid = reference.push().getKey();
+
+            HashMap<String , Object> hashMap = new HashMap<>();
+            hashMap.put("postType","image");
+            hashMap.put("postid" , postid);
+            hashMap.put("postimage" , repostedPost.getPostimage());
+            hashMap.put("description" , "*Repost*\n" +  repostedPost.getDescription().toString());
+            hashMap.put("publisher" , FirebaseAuth.getInstance().getCurrentUser().getUid());
+            hashMap.put("createdTime", System.currentTimeMillis());
+            reference.child(postid).setValue(hashMap);
+        }
+
+        newPost.setPostid(repostedPost.getPostid());
+        newPost.setRepostCount(repostedPost.getRepostCount());
+        newPost.setShared(true);
+
+        String postId = mDatabaseRef.push().getKey();
+        mDatabaseRef.child(postId).setValue(newPost);
+        reelList.add(0, newPost);
+
+        mDatabaseRef.child(postId).setValue(newPost)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(thisContext, "Share Successfully", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(thisContext, "Fail To Share", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
     private void isLikes (String reelID , ImageView imageView) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

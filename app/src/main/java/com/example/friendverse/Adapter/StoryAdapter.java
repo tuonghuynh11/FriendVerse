@@ -1,5 +1,6 @@
 package com.example.friendverse.Adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -147,6 +148,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                 if (click){
                     if (count > 0){
                         AlertDialog alertDialog = new AlertDialog.Builder(thisContext).create();
+                        alertDialog.setCancelable(true);
                         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "View Story",
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -167,6 +169,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                                         dialog.dismiss();
                                     }
                                 });
+
 
                         alertDialog.show();
                     } else {

@@ -136,9 +136,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.videoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+                /*SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
                 editor.putString("postid", post.getPostid());
-                editor.apply();
+                editor.apply();*/
+                Bundle bundle = new Bundle();
+                bundle.putString("postid", post.getPostid());
+                PostDetailFragment fragment = new PostDetailFragment();
+
 
                 ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new PostDetailFragment()).commit();
