@@ -627,7 +627,7 @@ public class ChatScreenActivity extends AppCompatActivity {
 //                  loadReceiverDetails();
 //                }
                 Intent intent = new Intent(getApplicationContext(), CallActivity.class);
-                intent.putExtra("to", receiverUser.getUsername().trim());
+                intent.putExtra("to", receiverUser.getId().trim());
                 intent.putExtra("isInComingCall", false);
                 startActivity(intent);
 //               initStringeeConnection();
@@ -637,7 +637,7 @@ public class ChatScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), videoCallActivity.class);
-                intent.putExtra("to", receiverUser.getUsername().trim());
+                intent.putExtra("to", receiverUser.getId().trim());
                 intent.putExtra("isInComingCall", false);
                 startActivity(intent);
                 // initStringeeConnection();
@@ -651,6 +651,9 @@ public class ChatScreenActivity extends AppCompatActivity {
                 i.putExtra("interacter", receiverUser.getId());
                 i.putExtra("interacterImage", receiverUser.getImageurl());
                 i.putExtra("interacterFullName", receiverUser.getFullname());
+                i.putExtra("conversationId", conversationId);
+
+
                 startActivity(i);
             }
         });

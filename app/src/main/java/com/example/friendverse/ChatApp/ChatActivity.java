@@ -20,6 +20,7 @@ import com.example.friendverse.Adapter.AddUserToGroupAdapter;
 import com.example.friendverse.Adapter.RecentConversationAdapter;
 import com.example.friendverse.Adapter.UserChatStatusAdapter;
 import com.example.friendverse.Login.LoginActivity;
+import com.example.friendverse.MainActivity;
 import com.example.friendverse.Model.ChatMessage;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
@@ -58,6 +59,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 
 public class ChatActivity extends AppCompatActivity implements ConversionListener {
     private ActivityChatBinding activityChatBinding;
@@ -111,7 +114,6 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
 
         setListeners();
         init();
-//        login();
         initTokenCall();
         initUserActivity();
 
@@ -134,6 +136,38 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
 
     }
 
+    public String initTokenCallId(){
+        String to=genAccessToken("SK.0.SuRZTlMwAYBlTV31iVERIZf8wXhV5O9","cllGbkRHdjB6T3VzWUxESFZVanZnenFBcEE2Y0V0WQ==",3600*60,currentUser.getId());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+        reference.child(User.TOKENCALLKEY).setValue(to);
+        return to;
+    }
+    public static String genAccessToken(String keySid, String keySecret, int expireInSecond, String userId) {
+        try {
+            Algorithm algorithmHS = Algorithm.HMAC256(keySecret);
+
+            Map<String, Object> headerClaims = new HashMap<String, Object>();
+            headerClaims.put("typ", "JWT");
+            headerClaims.put("alg", "HS256");
+            headerClaims.put("cty", "stringee-api;v=1");
+
+            long exp = (long) (System.currentTimeMillis()) + expireInSecond * 1000;
+
+            String token = JWT.create().withHeader(headerClaims)
+                    .withClaim("jti", keySid + "-" + System.currentTimeMillis())
+                    .withClaim("iss", keySid)
+                    .withExpiresAt(new Date(exp))
+                    .withClaim("userId",userId)
+                    .sign(algorithmHS);
+
+            return token;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
     public void initStringeeConnection() {
         client = new StringeeClient(this);
         client.setConnectionListener(new StringeeConnectionListener() {
@@ -151,8 +185,8 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
                                         android.util.Log.d("SampleCall", "register push success");
                                     }
                                 });
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
-                                reference.child(User.TOKENKEY).setValue(deviceToken);
+//                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+//                                reference.child(User.TOKENKEY).setValue(deviceToken);
                             }
                         }
                     });
@@ -405,12 +439,16 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
                 //User
                 ////Check if have tokenCall or not and assign token
 
-
-                ///
-                if (token == "") {
+                if (user.getTokenCall()==null){
+                    currentUser.setTokenCall(initTokenCallId());
+                }
+                if (token==null||token == "") {
                     token = currentUser.getTokenCall();
                     initStringeeConnection();
                 }
+
+                ///
+
             }
 
             @Override
@@ -432,7 +470,9 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
         activityChatBinding.imageBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent i= new Intent(getApplicationContext(), MainActivity.class);
+                finishAffinity();
+                startActivity(i);
             }
         });
         activityChatBinding.groupBtn.setOnClickListener(new View.OnClickListener() {
