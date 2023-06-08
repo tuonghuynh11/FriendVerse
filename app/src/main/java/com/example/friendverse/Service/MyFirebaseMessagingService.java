@@ -101,7 +101,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user1= snapshot.getValue(User.class);
-               callerName=user1.getUsername();
+                callerName=user1.getUsername();
                 showNotification(callerName);
 
             }
@@ -127,7 +127,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         //DatabaseReference reference=FirebaseDatabase.getInstance().getReference().child(User.USERKEY).child(from).child(User.FULLNAMEKEY);
         Intent intent = new Intent(this, ChatActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        }
+        else
+        {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Channel id");
         builder.setContentTitle("Coming call from " + from);
         builder.setContentText("FriendVerse");
@@ -190,8 +197,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         user1.setFullname(fullName);
         user1.setImageurl(hisImage);
         intent.putExtra(User.USERKEY, user1);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-
+        PendingIntent pendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        }
+        else
+        {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
         builder.setContentIntent(pendingIntent);
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -240,7 +253,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         user1.setFullname(fullName);
         user1.setImageurl(hisImage);
         intent.putExtra(User.USERKEY, user1);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        }
+        else
+        {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
 
         Notification notification = new Notification.Builder(this, "1000")
                 .setContentTitle(title)
