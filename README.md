@@ -107,9 +107,9 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
 
 #### 3.2 Công nghệ sử dụng
 
-- Công cụ: Visual Studio, SQL Server Management Studio, Github Desktop, Microsoft SQL Server, Microsoft Azure
-- Ngôn ngữ lập trình: C#, TSQL
-- Thư viện: .NET Framework, MaterialDesignXAML, Show Me The XAML, Entity Framework, Devexpress Framework, WPF
+- Công cụ: 
+- Ngôn ngữ lập trình: 
+- Thư viện: 
 
 ## 4. Hướng dẫn cài đặt
 <details>
@@ -117,7 +117,7 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
 
   * Liên hệ với nhà phát triển để được hỗ trợ khởi tạo cơ sở dữ liệu và kết nối đến cơ sở dữ liệu.
   * Giải nén và chạy file SetupFBM.msi hoặc setup.exe
-    * Dowload phần mềm tại: https://drive.google.com/file/d/1mpWYufvvIOTgdp3GduJG-4HodA3eRlLM/view?usp=share_link
+    * Dowload phần mềm tại: 
 
 </details>
 
@@ -125,13 +125,13 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
     <summary>Đối với nhà phát triển</summary>
 
   * Dowload, giải nén phần mềm
-    * Github: https://github.com/tuonghuynh11/FootBallManager.git
-    * Google Drive: https://drive.google.com/drive/folders/1uEsH5jcrxA8ratYCrcpkUKKwWAtqMsbJ?usp=share_link
+    * Github:
+    * Google Drive: 
   * Cài đặt database
     * Khuyến nghị sử dụng các dịch vụ đám mây như Azure, AWS,… để sử dụng tất cả tính năng hiện có của chương trình  (server đi kèm với chương trình đã đóng).
     * Ngoài ra có thể sử dụng SQL Server (Lưu ý: cách này sẽ mất đi tính năng tương tác giữa các user ở các máy tính khác nhau).
   * Khởi tạo Database bằng cách chạy script chứa trong file Seed.sql
-    * Tải file script tại: https://drive.google.com/drive/folders/19dLylv-vX3-xv_FsNEGTmDLlKu8OiHTl?usp=share_link
+    * Tải file script tại: 
   * Kết nối với Database vừa tạo bằng cách thay đổi connectionStrings trong file App.config.
   * Đăng nhập với vai trò admin
       * tên đăng nhập: admin
@@ -141,7 +141,7 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
 
 ## 5. Hướng dẫn sử dụng
 
-* Video demo: https://drive.google.com/file/d/1YYE5HnDN8Cv93Ns67jCzx4I7vgd4tz09/view?usp=share_link
+* Video demo:
 
 ## 6. Tác giả
 
@@ -150,7 +150,8 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
 | 1   | 21520123| [Huỳnh Mạnh Tường](https://github.com/tuonghuynh11)           | KTPM2021 | 
 | 2   | 21520341| [Dương Ngọc Mẫn](https://github.com/DNM03)              | KTPM2021 | 
 | 3   | 21520613| [Nguyễn Hoàng Quốc Bảo](https://github.com/QuocBaoKho) | KTPM2021 | 
-| 4   | 21520839| [Lê Phan Hiển](https://github.com/hienlephan2003)         	  | KTPM2021 | 
+| 4   | 21520839| [Nguyễn Thái Công](https://github.com/thai-cong-nguyen)         	  | KTPM2021 |
+| 5   | 21521986| [Đinh Đại Dương](https://github.com/Daiduong1593572468)         	  | KTPM2021 |
 * Sinh viên khoa Công nghệ Phần mềm, trường Đại học Công nghệ Thông tin, Đại học Quốc gia thành phố Hồ Chí Minh.
 
 ## 7. Giảng viên hướng dẫn
