@@ -6,12 +6,9 @@
 
 ## 1. Mô tả 
 
-Hiện nay, ứng dụng mạng xã hội đã trở thành một phần không thể thiếu trong cuộc sống của rất nhiều người trên toàn thế giới. Với sự phát
-triển của công nghệ và mạng internet, mạng xã hội đã trở thành một kênh giao tiếp, giải trí, trao đổi thông tin, quảng cáo, kinh doanh,
-và nhiều mục đích khác.
-Ứng dụng công nghệ thông tin vào việc chia sẻ thông tin, giao tiếp từ xa và mở rộng mối quan hệ không còn là một việc xa lạ trong thời
-đại ngày nay. Việc này giúp người dùng là có thể cập nhật thông tin mới cũng như giao tiếp với người khác một cách hiệu quả. Vì vậy, 
-một ứng dụng có thể giúp mọi người kết nối và xây dựng cộng đồng là cực kỳ cần thiết.  
+* Hiện nay, ứng dụng mạng xã hội đã trở thành một phần không thể thiếu trong cuộc sống của rất nhiều người trên toàn thế giới. Với sự phát triển của công nghệ và mạng internet, mạng xã hội đã trở thành một kênh giao tiếp, giải trí, trao đổi thông tin, quảng cáo, kinh doanh, và nhiều mục đích khác.
+* Ứng dụng công nghệ thông tin vào việc chia sẻ thông tin, giao tiếp từ xa và mở rộng mối quan hệ không còn là một việc xa lạ trong thời
+đại ngày nay. Việc này giúp người dùng là có thể cập nhật thông tin mới cũng như giao tiếp với người khác một cách hiệu quả. Vì vậy, một ứng dụng có thể giúp mọi người kết nối cũng như xây dựng các mối quan hệ là cực kỳ cần thiết.  
 
 
 ### 2. Mục đích, yêu cầu, người dùng hướng tới của đề tài
@@ -126,7 +123,7 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
     * Github:
     * Google Drive: 
   * Cài đặt database
-    *Liên hệ với nhà phát triển để cấp truyền truy cập vào cơ sở dữ liệu firebase
+    * Liên hệ với nhà phát triển để cấp truyền truy cập vào cơ sở dữ liệu firebase
   * Đăng nhập với vai trò admin
       * tên đăng nhập: admin
       * mật khẩu: 1234
