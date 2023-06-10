@@ -107,17 +107,15 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
 
 #### 3.2 Công nghệ sử dụng
 
-- Công cụ: 
-- Ngôn ngữ lập trình: 
-- Thư viện: 
+- Công cụ: Android Studio, Firebase, Github Desktop.
+- Ngôn ngữ lập trình: Java, NoSQL
+- Thư viện: Stringee, Picasso, Glide, Drjacky, FireBase,...
 
 ## 4. Hướng dẫn cài đặt
 <details>
     <summary>Đối với người dùng</summary>
 
-  * Liên hệ với nhà phát triển để được hỗ trợ khởi tạo cơ sở dữ liệu và kết nối đến cơ sở dữ liệu.
-  * Giải nén và chạy file SetupFBM.msi hoặc setup.exe
-    * Dowload phần mềm tại: 
+   * Dowload phần mềm tại: ..
 
 </details>
 
@@ -128,11 +126,7 @@ một ứng dụng có thể giúp mọi người kết nối và xây dựng c�
     * Github:
     * Google Drive: 
   * Cài đặt database
-    * Khuyến nghị sử dụng các dịch vụ đám mây như Azure, AWS,… để sử dụng tất cả tính năng hiện có của chương trình  (server đi kèm với chương trình đã đóng).
-    * Ngoài ra có thể sử dụng SQL Server (Lưu ý: cách này sẽ mất đi tính năng tương tác giữa các user ở các máy tính khác nhau).
-  * Khởi tạo Database bằng cách chạy script chứa trong file Seed.sql
-    * Tải file script tại: 
-  * Kết nối với Database vừa tạo bằng cách thay đổi connectionStrings trong file App.config.
+    *Liên hệ với nhà phát triển để cấp truyền truy cập vào cơ sở dữ liệu firebase
   * Đăng nhập với vai trò admin
       * tên đăng nhập: admin
       * mật khẩu: 1234
