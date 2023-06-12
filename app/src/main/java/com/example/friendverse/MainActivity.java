@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         if (auth.getCurrentUser()==null)
             return;
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
-        reference.child(User.ACTIVITYKEY).setValue(1);
+        reference.child(User.ACTIVITYKEY).setValue(0);
     }
     @Override
     protected void onDestroy() {
