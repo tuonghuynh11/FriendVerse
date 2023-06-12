@@ -118,7 +118,29 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
         initUserActivity();
 
     }
+ @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+            reference.child(User.ACTIVITYKEY).setValue(1);
+        }
+        catch (Exception ex){
+            Log.e("TAG", "User not login");
+        }
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+            reference.child(User.ACTIVITYKEY).setValue(0);
+        }
+        catch (Exception ex){
+            Log.e("TAG", "User not login");
+        }
+    }
     public void initTokenCall() {
         runOnUiThread(() -> {
             FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
