@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/normal" android:title="Normal "  android:icon="@drawable/normal_40" ></item>
+    <item android:id="@+id/satellite" android:title="Satellite" android:icon="@drawable/satellite_40"></item>
+    <item android:id="@+id/hybrid" android:title="Hybrid" android:icon="@drawable/hybrid_40"></item>
+    <item android:id="@+id/terrain" android:title="Terrain" android:icon="@drawable/terrain_40"></item>
+    <item android:id="@+id/none" android:title="None" android:icon="@drawable/none_40"> </item>
+</menu>

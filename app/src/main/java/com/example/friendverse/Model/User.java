@@ -3,19 +3,21 @@ package com.example.friendverse.Model;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    public static final String USERKEY="Users";
-    public static final String IDKEY="id";
-    public static final String USERNAMEKEY="username";
-    public static final String FULLNAMEKEY="fullname";
-    public static final String IMAGEKEY="imageurl";
-    public static final String BIOKEY="bio";
-    public static final String EMAILOKEY="email";
-    public static final String TOKENCALLKEY="tokenCall";
-    public static final String TOKENKEY="token";
-    public static final String ACTIVITYKEY="activity";
+    public static final String USERKEY = "Users";
+    public static final String IDKEY = "id";
+    public static final String USERNAMEKEY = "username";
+    public static final String FULLNAMEKEY = "fullname";
+    public static final String IMAGEKEY = "imageurl";
+    public static final String BIOKEY = "bio";
+    public static final String EMAILOKEY = "email";
+    public static final String TOKENCALLKEY = "tokenCall";
+    public static final String TOKENKEY = "token";
+    public static final String ACTIVITYKEY = "activity";
 
     public static final String WEBSITEKEY = "website";
     public static final String PHONEKEY = "phonenumber";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
 
     private String id;
     private String username;
@@ -33,7 +35,7 @@ public class User implements Serializable {
 
     private int activity;
 
-    private boolean isSelected= false;
+    private boolean isSelected = false;
 
     public boolean isBan() {
         return isBan;
@@ -44,25 +46,45 @@ public class User implements Serializable {
     }
 
     private boolean isBan;
+    private double latitude;
+    private double longitude;
+
     public User() {
     }
 
 
-    public User(String id, String username, String fullname, String imageurl, String bio,String email, int activity, boolean ban, String tokenCall,String token, String website, String phonenumber) {
+    public User(String id, String username, String fullname, String imageurl, String bio, String email, int activity, boolean ban, String tokenCall, String token, String website, String phonenumber, double latitude, double longitude) {
 
         this.id = id;
         this.username = username;
         this.fullname = fullname;
         this.imageurl = imageurl;
         this.bio = bio;
-        this.email=email;
-        this.activity=activity;
-        this.tokenCall=tokenCall;
-        this.token=token;
+        this.email = email;
+        this.activity = activity;
+        this.tokenCall = tokenCall;
+        this.token = token;
         this.isBan = ban;
         this.website = website;
         this.phonenumber = phonenumber;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public boolean isSelected() {
@@ -96,6 +118,7 @@ public class User implements Serializable {
     public void setAvailability(int activity) {
         this.activity = activity;
     }
+
     public String getId() {
         return id;
     }
@@ -136,7 +159,9 @@ public class User implements Serializable {
         this.bio = bio;
     }
 
-    public String getWebsite() {return website;}
+    public String getWebsite() {
+        return website;
+    }
 
     public void setWebsite(String website) {
         this.website = website;

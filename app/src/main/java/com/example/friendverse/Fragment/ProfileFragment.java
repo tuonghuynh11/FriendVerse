@@ -29,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.example.friendverse.Adapter.MyPhotoAdapter;
 import com.example.friendverse.AddPost;
 import com.example.friendverse.ChatApp.ChatScreenActivity;
+import com.example.friendverse.FriendMapActivity;
 import com.example.friendverse.Profile.FollowActivity;
 import com.example.friendverse.Model.Post;
 import com.example.friendverse.Model.User;
@@ -218,6 +219,15 @@ public class ProfileFragment extends Fragment {
                     bottomSheetView.findViewById(R.id.linear_qrcode).setVisibility(View.GONE);
                     bottomSheetView.findViewById(R.id.linear_wallet).setVisibility(View.GONE);
                 }
+                bottomSheetView.findViewById(R.id.friendMaps).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        Intent intent= new Intent(getActivity(), FriendMapActivity.class);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
                 bottomSheetView.findViewById(R.id.report).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
