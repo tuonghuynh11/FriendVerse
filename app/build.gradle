@@ -142,7 +142,7 @@ dependencies {
     // This library is used for crop image feature
     implementation 'com.github.shts:StoriesProgressView:3.0.0'
 
-    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
+    //api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 
 // This library is used for loading the
     // When using the BoM, you don't specify versions in Firebase library dependencies
