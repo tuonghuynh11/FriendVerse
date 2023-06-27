@@ -247,7 +247,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
             reelVid.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
-                    //mediaPlayer.start();
+                    mediaPlayer.start();
                     float videoRatio = mediaPlayer.getVideoWidth()/(float)mediaPlayer.getVideoHeight();
                     float screenRatio = reelVid.getWidth()/(float)reelVid.getHeight();
                     float scale = videoRatio/screenRatio;
