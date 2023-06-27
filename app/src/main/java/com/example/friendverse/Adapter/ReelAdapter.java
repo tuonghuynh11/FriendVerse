@@ -259,6 +259,13 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
                     }
                 }
             });
+            reelVid.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                    Log.d("VideoError", "Can't load the video");
+                    return true;
+                }
+            });
             reelVid.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
