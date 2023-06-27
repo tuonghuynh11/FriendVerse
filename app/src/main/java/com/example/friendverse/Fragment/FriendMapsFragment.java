@@ -77,7 +77,7 @@ public class FriendMapsFragment extends Fragment {
 
     public List<User> userList = new ArrayList<>();
     List<String> userFollowersListId = new ArrayList<>();
-
+      int isNotify=0;
     private User currentUser;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -266,7 +266,19 @@ public class FriendMapsFragment extends Fragment {
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         Location currentLoc = (Location) task.getResult();
-                        myLocation = new MarkerOptions().position(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()));
+                        try {
+                            myLocation = new MarkerOptions().position(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()));
+
+                        }catch (Exception e){
+                            if (isNotify==0){
+                                Toast.makeText(getActivity(), "Your Location turns off", Toast.LENGTH_SHORT).show();
+                                isNotify=1;
+                            }
+                            else {
+                                Toast.makeText(getActivity(), "You need to turns on your location", Toast.LENGTH_SHORT).show();
+                            }
+                            return;
+                        }
                         if (android.os.Build.VERSION.SDK_INT > 9) {
                             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                             StrictMode.setThreadPolicy(policy);
