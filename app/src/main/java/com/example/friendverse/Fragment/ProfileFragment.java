@@ -208,16 +208,12 @@ public class ProfileFragment extends Fragment {
                 if (state == 0) {
                     bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
                     bottomSheetView.findViewById(R.id.linear_setting).setVisibility(View.VISIBLE);
-                    bottomSheetView.findViewById(R.id.linear_youractivity).setVisibility(View.VISIBLE);
                     bottomSheetView.findViewById(R.id.linear_qrcode).setVisibility(View.VISIBLE);
-                    bottomSheetView.findViewById(R.id.linear_wallet).setVisibility(View.VISIBLE);
                 }
                 else if (state != 0){
                     bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
                     bottomSheetView.findViewById(R.id.linear_setting).setVisibility(View.GONE);
-                    bottomSheetView.findViewById(R.id.linear_youractivity).setVisibility(View.GONE);
                     bottomSheetView.findViewById(R.id.linear_qrcode).setVisibility(View.GONE);
-                    bottomSheetView.findViewById(R.id.linear_wallet).setVisibility(View.GONE);
                 }
                 bottomSheetView.findViewById(R.id.friendMaps).setOnClickListener(new View.OnClickListener() {
                     @Override
