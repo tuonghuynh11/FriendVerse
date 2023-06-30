@@ -195,14 +195,15 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.ViewHolder>{
             });
         }
     }
-    private void addNotification(String userId) {
-        HashMap<String, Object> map = new HashMap<>();
+    private void addNotifications(String userid) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
 
-        map.put("userid", userId);
-        map.put("text", "started following you.");
-        map.put("posted", "");
-        map.put("isPost", false);
+        HashMap<String , Object> hashMap = new HashMap<>();
+        hashMap.put("userid" , firebaseUser.getUid());
+        hashMap.put("text" , "started following you");
+        hashMap.put("postid" , "");
+        hashMap.put("ispost" , false);
 
-        FirebaseDatabase.getInstance().getReference().child("Notifications").child(firebaseUser.getUid()).push().setValue(map);
+        reference.push().setValue(hashMap);
     }
 }
