@@ -121,6 +121,7 @@ public class AddStoryActivity extends AppCompatActivity {
 
 
         if (imageUri != null){
+            ProgressDialog pd = ProgressDialog.show(this, "Uploading", "Story uploading");
             final StorageReference filereference = storageReference.child(System.currentTimeMillis()+ "." + getFileExtension(imageUri));
 
             uploadTask = filereference.putFile(imageUri);
@@ -157,16 +158,18 @@ public class AddStoryActivity extends AppCompatActivity {
 
 
                         Toast.makeText(AddStoryActivity.this, "Succeeded!", Toast.LENGTH_SHORT).show();
-
+                        pd.dismiss();
                         startActivity(new Intent(AddStoryActivity.this , MainActivity.class));
                         finish();
                     } else {
+                        pd.dismiss();
                         Toast.makeText(AddStoryActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    pd.dismiss();
                     Toast.makeText(AddStoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
