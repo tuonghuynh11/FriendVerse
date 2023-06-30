@@ -253,16 +253,17 @@ public class ProfileFragment extends Fragment {
                         fragmentTransaction.commit();
                     }
                 });
-//                bottomSheetView.findViewById(R.id.youractivity).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Fragment yourActivityFragment = new YourActivityFragment();
-//                        FragmentManager fragmentManager = getParentFragmentManager();
-//                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                        fragmentTransaction.replace(R.id.fragment_container, yourActivityFragment).addToBackStack(null);
-//                        fragmentTransaction.commit();
-//                    }
-//                });
+                bottomSheetView.findViewById(R.id.qrcode).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.cancel();
+                        Fragment qrcodeFragment = new QrCodeFragment();
+                        FragmentManager fragmentManager = getParentFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, qrcodeFragment).addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                });
 
                 bottomSheetDialog.setContentView(bottomSheetView);
                 bottomSheetDialog.show();
