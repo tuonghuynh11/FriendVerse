@@ -118,19 +118,23 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
     }
 
-    private void getUserInfo(final ImageView imageView , final TextView username , String publisherid) {
+      private void getUserInfo(final ImageView imageView, final TextView username, String publisherid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(publisherid);
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                Picasso.get().load(user.getImageurl()).placeholder(R.drawable.ic_profile).into(imageView);
-                username.setText(user.getUsername());
+                if (dataSnapshot.exists()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user != null) {
+                        Picasso.get().load(user.getImageurl()).placeholder(R.drawable.ic_profile).into(imageView);
+                        username.setText(user.getUsername());
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                // Xử lý khi có lỗi xảy ra
             }
         });
     }
