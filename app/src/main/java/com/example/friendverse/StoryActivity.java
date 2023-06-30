@@ -169,12 +169,14 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(StoryActivity.this);
+                progressView.pause();
                 builder.setCancelable(true);
                 builder.setTitle("Delete?");
                 builder.setMessage("Do you want to delete?");
                 builder.setNegativeButton("No way", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int inter) {
+                        progressView.resume();
                         dialogInterface.dismiss();
                     }
                 });
@@ -313,7 +315,12 @@ public class StoryActivity extends AppCompatActivity implements StoriesProgressV
                         storyIDs.add(myStory.getStoryID());
                     }
                 }
-
+                if(images.size() == 0){
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+                    finish();
+                    return;
+                }
                 progressView.setStoriesCount(images.size());
                 progressView.setStoriesListener(StoryActivity.this);
                 progressView.setStoryDuration(5000);
