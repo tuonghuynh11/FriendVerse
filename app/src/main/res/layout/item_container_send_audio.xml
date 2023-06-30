@@ -13,6 +13,7 @@
             android:id="@+id/voicePlayerView"
             android:layout_width="@dimen/_200sdp"
             android:layout_height="wrap_content"
+            android:gravity="right"
             app:enableVisualizer="true"
             app:playPauseBackgroundColor="@color/colorAccent"
             app:playPauseCornerRadius="100"
