@@ -208,16 +208,12 @@ public class ProfileFragment extends Fragment {
                 if (state == 0) {
                     bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.GONE);
                     bottomSheetView.findViewById(R.id.linear_setting).setVisibility(View.VISIBLE);
-                    bottomSheetView.findViewById(R.id.linear_youractivity).setVisibility(View.VISIBLE);
                     bottomSheetView.findViewById(R.id.linear_qrcode).setVisibility(View.VISIBLE);
-                    bottomSheetView.findViewById(R.id.linear_wallet).setVisibility(View.VISIBLE);
                 }
                 else if (state != 0){
                     bottomSheetView.findViewById(R.id.linear_report).setVisibility(View.VISIBLE);
                     bottomSheetView.findViewById(R.id.linear_setting).setVisibility(View.GONE);
-                    bottomSheetView.findViewById(R.id.linear_youractivity).setVisibility(View.GONE);
                     bottomSheetView.findViewById(R.id.linear_qrcode).setVisibility(View.GONE);
-                    bottomSheetView.findViewById(R.id.linear_wallet).setVisibility(View.GONE);
                 }
                 bottomSheetView.findViewById(R.id.friendMaps).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -253,16 +249,17 @@ public class ProfileFragment extends Fragment {
                         fragmentTransaction.commit();
                     }
                 });
-//                bottomSheetView.findViewById(R.id.youractivity).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Fragment yourActivityFragment = new YourActivityFragment();
-//                        FragmentManager fragmentManager = getParentFragmentManager();
-//                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                        fragmentTransaction.replace(R.id.fragment_container, yourActivityFragment).addToBackStack(null);
-//                        fragmentTransaction.commit();
-//                    }
-//                });
+                bottomSheetView.findViewById(R.id.qrcode).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomSheetDialog.cancel();
+                        Fragment qrcodeFragment = new QrCodeFragment();
+                        FragmentManager fragmentManager = getParentFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, qrcodeFragment).addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                });
 
                 bottomSheetDialog.setContentView(bottomSheetView);
                 bottomSheetDialog.show();
