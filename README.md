@@ -112,7 +112,7 @@
 <details>
     <summary>Đối với người dùng</summary>
 
-   * Dowload phần mềm tại: ..
+   * Dowload phần mềm tại: https://drive.google.com/drive/folders/1iI3qTjPLk7vJdc_w0acOIeMqsblKmtGP?usp=drive_link
 
 </details>
 
@@ -120,13 +120,13 @@
     <summary>Đối với nhà phát triển</summary>
 
   * Dowload, giải nén phần mềm
-    * Github:
-    * Google Drive: 
+    * Github:https://github.com/tuonghuynh11/FriendVerse.git
+    * Google Drive: https://drive.google.com/drive/folders/1iI3qTjPLk7vJdc_w0acOIeMqsblKmtGP?usp=drive_link
   * Cài đặt database
     * Liên hệ với nhà phát triển để cấp truyền truy cập vào cơ sở dữ liệu firebase
   * Đăng nhập với vai trò admin
       * tên đăng nhập: admin
-      * mật khẩu: 1234
+      * mật khẩu: 123456789
 
 </details>
 
