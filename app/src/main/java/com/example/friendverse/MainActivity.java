@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case id.nav_home:
                 selectedFragment = new HomeFragment();
+                HomeFragment.position=0;
                 break;
             case id.nav_search:
                 selectedFragment = new SearchFragment();
