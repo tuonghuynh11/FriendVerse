@@ -100,9 +100,9 @@ public class HomeFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                recyclerView.scrollToPosition(5);
+                recyclerView.scrollToPosition(position);
             }
-        }, 5000);
+        }, 0);
 
         return view;
     }
@@ -149,10 +149,10 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void run() {
                     RecyclerView.LayoutManager tf = new LinearLayoutManager(getContext());
-                    tf.scrollToPosition(5);
-                    recyclerView.scrollToPosition(5);
+                    tf.scrollToPosition(position);
+                    recyclerView.scrollToPosition(position);
                 }
-            }, 5000);
+            }, 0);
         }
     }
 
@@ -182,9 +182,9 @@ public class HomeFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        recyclerView.scrollToPosition(5);
+                        recyclerView.scrollToPosition(position);
                     }
-                }, 5000);
+                }, 0);
             }
 
             @Override
