@@ -53,6 +53,7 @@
 - Tương tác nội dung
 - Báo cáo user
 - Báo cáo bài viết
+- FriendMap
 
 </details>
 
