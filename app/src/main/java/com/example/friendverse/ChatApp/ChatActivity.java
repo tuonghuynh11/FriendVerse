@@ -159,7 +159,7 @@ public class ChatActivity extends AppCompatActivity implements ConversionListene
     }
 
     public String initTokenCallId(){
-        String to=genAccessToken("SK.0.SuRZTlMwAYBlTV31iVERIZf8wXhV5O9","cllGbkRHdjB6T3VzWUxESFZVanZnenFBcEE2Y0V0WQ==",3600*60,currentUser.getId());
+        String to=genAccessToken("SK.0.pSlmNy1Ruqc7TGf3a473K8Vfcd8olWsH","R0RmNDNEZU1Fd2V0aFZ2Z2xLSjJtZkQ5cVNrTFhrVnI=",3600*60,currentUser.getId());
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
         reference.child(User.TOKENCALLKEY).setValue(to);
         return to;
