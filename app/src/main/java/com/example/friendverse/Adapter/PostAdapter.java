@@ -257,6 +257,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.fragment_container, profileFragment).addToBackStack(PostDetailFragment.class.getName());
                     fragmentTransaction.commit();
+                    HomeFragment.position= position;
                 }
             }
         });
