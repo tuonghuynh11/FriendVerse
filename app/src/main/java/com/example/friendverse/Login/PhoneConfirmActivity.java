@@ -193,9 +193,9 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if(snapshot.hasChild(userid)){
-                                        goToMainActivity(user.getPhoneNumber());
-                                        finishAffinity();
-                                        loadingDialog.hideDialog();
+                                        //goToMainActivity(user.getPhoneNumber());
+                                        //finishAffinity();
+                                        //loadingDialog.hideDialog();
                                     }
                                     else{
                                         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
