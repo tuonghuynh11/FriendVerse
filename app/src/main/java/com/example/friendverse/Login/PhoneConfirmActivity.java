@@ -38,6 +38,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class PhoneConfirmActivity extends AppCompatActivity {
@@ -167,12 +169,13 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                             reference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
                             reference.child(User.ACTIVITYKEY).setValue(1);
 
+
                             reference.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                    User user = dataSnapshot.getValue(User.class);
-                                    LoginActivity.getCurrentUser = user;
+//                                    User user = dataSnapshot.getValue(User.class);
+//                                    LoginActivity.getCurrentUser = user;
 
 
                                 }
@@ -190,7 +193,9 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if(snapshot.hasChild(userid)){
-
+                                        goToMainActivity(user.getPhoneNumber());
+                                        finishAffinity();
+                                        loadingDialog.hideDialog();
                                     }
                                     else{
                                         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
@@ -218,6 +223,19 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                         });
 
                                         initTokenCall();
+                                        Toast.makeText(PhoneConfirmActivity.this, "This is your first time signin. Please restart app!", Toast.LENGTH_SHORT).show();
+
+                                        Timer timer = new Timer();
+                                        timer.schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+
+//                                            loadingDialog.hideDialog();
+//                                            startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                                finishAffinity();
+                                                System.exit(0);
+                                            }
+                                        }, 4*1000);
                                     }
                                 }
 
@@ -267,9 +285,22 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                         });
 
                                         initTokenCall();
-                                        goToMainActivity(user.getPhoneNumber());
-                                        finishAffinity();
-                                        loadingDialog.hideDialog();
+
+
+                                        Toast.makeText(PhoneConfirmActivity.this, "This is your first time signin. Please restart app!", Toast.LENGTH_SHORT).show();
+
+                                        Timer timer = new Timer();
+                                        timer.schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+
+//                                            loadingDialog.hideDialog();
+//                                            startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                                finishAffinity();
+                                                System.exit(0);
+                                            }
+                                        }, 4*1000);
+
                                     }
                                 }
 
@@ -280,7 +311,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                             });
 
                             // Update UI
-                            
+
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
