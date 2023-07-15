@@ -237,10 +237,12 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if(snapshot.hasChild("phonenumber")){
-
+                                        goToMainActivity(user.getPhoneNumber());
+                                        finishAffinity();
+                                        loadingDialog.hideDialog();
                                     }
                                     else{
-                                        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
+                                        //reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
 
 
                                         HashMap<String, Object> hashMap = new HashMap<>();
@@ -265,7 +267,9 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                         });
 
                                         initTokenCall();
-
+                                        goToMainActivity(user.getPhoneNumber());
+                                        finishAffinity();
+                                        loadingDialog.hideDialog();
                                     }
                                 }
 
@@ -276,9 +280,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                             });
 
                             // Update UI
-                            goToMainActivity(user.getPhoneNumber());
-                            finishAffinity();
-                            loadingDialog.hideDialog();
+                            
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
