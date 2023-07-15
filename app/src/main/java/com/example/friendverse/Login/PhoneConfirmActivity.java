@@ -286,6 +286,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
 
                                         initTokenCall();
 
+
                                         Toast.makeText(PhoneConfirmActivity.this, "This is your first time signin. Please restart app!", Toast.LENGTH_SHORT).show();
 
                                         Timer timer = new Timer();
@@ -299,6 +300,7 @@ public class PhoneConfirmActivity extends AppCompatActivity {
                                                 System.exit(0);
                                             }
                                         }, 4*1000);
+
                                     }
                                 }
 
