@@ -403,9 +403,9 @@ public class LoginActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             if(snapshot.hasChild(userid)){
-                                                loadingDialog.hideDialog();
-                                                startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                                                finishAffinity();
+                                                //loadingDialog.hideDialog();
+                                                //startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                                //finishAffinity();
                                             }
                                             else{
                                                 reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
