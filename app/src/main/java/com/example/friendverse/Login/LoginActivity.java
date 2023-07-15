@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoginActivity extends AppCompatActivity {
     private TextView tvforgetPass;
@@ -264,8 +266,8 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                User user = dataSnapshot.getValue(User.class);
-                                getCurrentUser = user;
+//                                User user = dataSnapshot.getValue(User.class);
+//                                getCurrentUser = user;
                             }
 
                             @Override
@@ -379,8 +381,11 @@ public class LoginActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                            User user = dataSnapshot.getValue(User.class);
-                                            getCurrentUser = user;
+//                                            User user = dataSnapshot.getValue(User.class);
+//                                            if(user != null){
+//                                                getCurrentUser = user;
+//                                            }
+
 
 
                                         }
@@ -398,7 +403,9 @@ public class LoginActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             if(snapshot.hasChild(userid)){
-
+                                                loadingDialog.hideDialog();
+                                                startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                                finishAffinity();
                                             }
                                             else{
                                                 reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
@@ -426,7 +433,19 @@ public class LoginActivity extends AppCompatActivity {
                                                 });
 
                                                 initTokenCall();
+                                                Toast.makeText(LoginActivity.this, "This is your first time signin. Please restart app!", Toast.LENGTH_SHORT).show();
 
+                                                Timer timer = new Timer();
+                                                timer.schedule(new TimerTask() {
+                                                    @Override
+                                                    public void run() {
+
+//                                            loadingDialog.hideDialog();
+//                                            startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                                        finishAffinity();
+                                                        System.exit(0);
+                                                    }
+                                                }, 4*1000);
                                             }
                                         }
 
@@ -446,10 +465,12 @@ public class LoginActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             if(snapshot.hasChild("fullname")){
-
+                                                loadingDialog.hideDialog();
+                                                startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                                finishAffinity();
                                             }
                                             else{
-                                                reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
+                                                //reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
 
 
                                                 HashMap<String, Object> hashMap = new HashMap<>();
@@ -473,7 +494,19 @@ public class LoginActivity extends AppCompatActivity {
                                                     }
                                                 });
                                                 initTokenCall();
+                                                Toast.makeText(LoginActivity.this, "This is your first time signin. Please restart app!", Toast.LENGTH_SHORT).show();
 
+                                                Timer timer = new Timer();
+                                                timer.schedule(new TimerTask() {
+                                                    @Override
+                                                    public void run() {
+
+//                                            loadingDialog.hideDialog();
+//                                            startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                                        finishAffinity();
+                                                        System.exit(0);
+                                                    }
+                                                }, 4*1000);
                                             }
                                         }
 
@@ -485,9 +518,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                                    loadingDialog.hideDialog();
-                                    startActivity(new Intent(LoginActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                                    finishAffinity();
                                     //displayToast("Firebase authentication successful");
                                 } else {
                                     // When task is unsuccessful display Toast
