@@ -223,6 +223,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
         TextView content;
         TextView username;
         TextView likes, shares, comments;
+        ProgressBar progressBar;
         public viewHolder(@NonNull View itemView){
             super(itemView);
             reelVid = itemView.findViewById(R.id.ReelVideo);
@@ -237,7 +238,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
             shares = itemView.findViewById(R.id.shares);
             save = itemView.findViewById(R.id.save);
             addReel = itemView.findViewById(R.id.addReel);
-
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
 
         void setData(int position){
@@ -248,6 +249,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
             reelVid.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
+                    progressBar.setVisibility(View.GONE);
                     mediaPlayer.start();
                     float videoRatio = mediaPlayer.getVideoWidth()/(float)mediaPlayer.getVideoHeight();
                     float screenRatio = reelVid.getWidth()/(float)reelVid.getHeight();
