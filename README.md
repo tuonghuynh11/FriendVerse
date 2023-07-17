@@ -126,8 +126,8 @@
   * Cài đặt database
     * Liên hệ với nhà phát triển để cấp truyền truy cập vào cơ sở dữ liệu firebase
   * Đăng nhập với vai trò admin
-      * tên đăng nhập: admin
-      * mật khẩu: 123456789
+      * tên đăng nhập: admin@gmail.com
+      * mật khẩu: 123456
 
 </details>
 
