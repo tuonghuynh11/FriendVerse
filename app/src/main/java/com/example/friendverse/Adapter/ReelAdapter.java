@@ -117,6 +117,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
                 intent.putExtra("postid" , reel.getPostid());
                 intent.putExtra("publisherid" , reel.getPublisher());
                 thisContext.startActivity(intent);
+                holder.progressBar.setVisibility(View.VISIBLE);
             }
         });
         holder.likes.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +135,7 @@ public class ReelAdapter extends RecyclerView.Adapter<ReelAdapter.viewHolder> {
             public void onClick(View view) {
                 Intent x = new Intent(thisContext, AddReelActivity.class);
                 thisContext.startActivity(x);
+                holder.progressBar.setVisibility(View.VISIBLE);
             }
         });
         holder.content.setOnClickListener(new View.OnClickListener() {
