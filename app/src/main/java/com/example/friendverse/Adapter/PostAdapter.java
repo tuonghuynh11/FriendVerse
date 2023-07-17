@@ -241,8 +241,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
 
                 boolean isFragmentExists = false;
-                for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
-                    if (fragmentManager.getBackStackEntryAt(i).getName().equals(PostDetailFragment.class.getName())) {
+                  for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+                    FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(i);
+                    if (entry.getName() != null && entry.getName().equals(PostDetailFragment.class.getName())) {
                         isFragmentExists = true;
                         break;
                     }
