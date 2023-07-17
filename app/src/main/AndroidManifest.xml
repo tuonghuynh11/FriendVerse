@@ -47,7 +47,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBg8RtAbXyLYcRpQOe2KPwCuNNvW-Rrq70" />
+            android:value="AIzaSyAZvKyImmqK3NGHT1UiisbfKGN5Lua_mho" />
 
         <activity
             android:name=".FriendMapActivity"
