@@ -131,11 +131,22 @@
 
 </details>
 
-## 5. Hướng dẫn sử dụng
+## 5. UI
+<img src="https://github.com/user-attachments/assets/7871e988-6775-424f-9fe1-c3a321bb6eba" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/bb91b754-b2ed-47a9-aa7f-97b36cbe3a24" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/6c0b7bf7-3cd3-484b-abce-4104a737953c" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/06264c69-e5d8-4be4-881d-26a6de0dba31" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/9b3a2598-e0f4-4a47-b586-6e3456bf1e54" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/5c6c1660-84a0-4b0e-af3b-33bc3bd4c215" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/b636e655-5c5f-49ab-9f91-f69356a397fd" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/a569b06c-5118-47d3-8673-e4e31cbb3e3d" width="250" height="590">
+<img src="https://github.com/user-attachments/assets/5a69f852-9918-4afa-ac99-9c58f63ec140" width="250" height="590">
+
+## 6. Hướng dẫn sử dụng
 
 * Video demo:
 
-## 6. Tác giả
+## 7. Tác giả
 
 | STT | MSSV     | Họ và tên                                                  | Lớp      | 
 | --- | -------- | ---------------------------------------------------------- | -------- | 
@@ -146,6 +157,6 @@
 | 5   | 21521986| [Đinh Đại Dương](https://github.com/Daiduong1593572468)         	  | KTPM2021 |
 * Sinh viên khoa Công nghệ Phần mềm, trường Đại học Công nghệ Thông tin, Đại học Quốc gia thành phố Hồ Chí Minh.
 
-## 7. Giảng viên hướng dẫn
+## 8. Giảng viên hướng dẫn
 
 * Thầy Nguyễn Tấn Toàn, giảng viên Khoa Công Nghệ Phần Mềm, trường Đại học Công nghệ Thông tin, Đại học Quốc gia Thành phố Hồ Chí Minh.
